@@ -1,24 +1,25 @@
-import logo from './logo.svg';
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import GetDonation from './pages/tabel/getDonation'
+import GetCampaign from './pages/tabel/getCampaign'
+import QrCodewa from './pages/qrcodewa'
+import Login from './pages/login'
+import Dashboard from './pages/dashboard'
 import './App.css';
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/" exact component={Login}></Route>
+          <Route path="/tabel/getDonation/:id" exact component={GetDonation}></Route>
+          <Route path="/tabel/getCampaign" exact component={GetCampaign}></Route>
+          <Route path="/dashboard" exact component={Dashboard}></Route>
+          <Route path="/qr-code-wa" exact component={QrCodewa}></Route>
+        </Switch>
+      </BrowserRouter>
+    </>
   );
 }
 
