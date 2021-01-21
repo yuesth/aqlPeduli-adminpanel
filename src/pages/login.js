@@ -1,7 +1,7 @@
+import { useState, useEffect } from 'react'
 import "./login.css"
 
 function Login(props) {
-    
     return (
         <>
             <div className="container">
@@ -13,7 +13,7 @@ function Login(props) {
                             <form className="form-signin formSignin">
                                 <input type="text" className="form-control formControl" placeholder="Email" required autofocus />
                                 <input type="password" className="form-control formControl" placeholder="Password" required />
-                                <a href="/dashboard" style={{color:`white`, textDecoration:`none`}}><button className="btn btn-lg btn-primary w-100" type="button">
+                                <a href="/dashboard" style={{ color: `white`, textDecoration: `none` }}><button className="btn btn-lg btn-primary w-100" type="button">
                                     Sign in</button></a>
                                 <label className="checkbox pull-left">
                                     <input type="checkbox" defaultValue="remember-me" />
@@ -22,6 +22,7 @@ function Login(props) {
                             </form>
                         </div>
                         <a href="/dashboard" className="text-center new-account newAccount">Create an account </a>
+                        {t}
                     </div>
                 </div>
             </div>

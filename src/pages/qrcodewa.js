@@ -17,7 +17,7 @@ function Qrcodewa(props) {
             <Layout active={act}>
                 <div className="row jusify-content-center">
                     <div className="col-9">
-                        <a href="http://128.199.67.117:8001/getqr"><button className="btn btn-primary">Generate QR Code</button></a>
+                        <a href="https://admin-donasi.aqlpeduli.or.id/wa-blast/getqr"><button className="btn btn-primary">Generate QR Code</button></a>
                     </div>
                 </div>
             </Layout>
