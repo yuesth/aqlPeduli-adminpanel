@@ -22,7 +22,6 @@ function Login(props) {
                             </form>
                         </div>
                         <a href="/dashboard" className="text-center new-account newAccount">Create an account </a>
-                        {t}
                     </div>
                 </div>
             </div>
