@@ -10,7 +10,6 @@ function Sidebar(props) {
         var link = document.getElementsByClassName("nav-link")
         for (var i = 0; i < link.length; i++) {
             var cur = link[i];
-            console.log(cur.className)
             if (cur.className.includes(props.active)) {
                 cur.classList.add("active")
             }
