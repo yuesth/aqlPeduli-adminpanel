@@ -12,6 +12,11 @@ function FormTabel(props) {
     const [campaign, setCampaign] = useState([])
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [form, setForm] = useState({
+        campaign_name: '',
+        target: 0,
+        deadline: ''
+    })
     const handleTambah = () => setOpen(prev => !prev)
     const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc'
     useEffect(() => {
@@ -27,31 +32,50 @@ function FormTabel(props) {
             setLoading(false)
         })
     }, [])
-    // const handleAddCampaign = useCallback(() => {
-    //     fetch(`https://donasi.aqlpeduli.or.id/deleteCampaign?token=${token}&id=${idcamp}`, {
-    //         method: "DELETE",
-    //     }).then(res => {
-    //         console.log(res)
-    //         window.location.href = "http://localhost:3000/tabel/getCampaign"
+    // useEffect(()=>{
+    //     var submitBtn = document.getElementById("tambahCampaign")
+    //     submitBtn.addEventListener('click',() => {
+
     //     })
-    // }, [])
+    // })
+    const handleAddCampaign = (e) => {
+        fetch(`https://donasi.aqlpeduli.or.id/addCampaign?token=${token}`, {
+            method: "POST",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(form)
+        }).then(res => {
+            console.log(res)
+            setTimeout(()=>{
+                window.location.href = "https://admin-donasi.aqlpeduli.or.id/tabel/getCampaign"
+            }, 2500)
+        })
+        e.preventDefault()
+    }
+    const onChangeAddCampaign = (e) => {
+        setForm({
+            ...form,
+            [e.target.name]: e.target.value
+        })
+    }
     return (
         <>
             <Layout active={act}>
                 <div className="w-auto h-auto position-absolute" style={{ top: `1rem`, right: `2rem` }} onClick={handleTambah} data-bs-toggle="modal" data-bs-target="#tambahCampaignModal">
                     <button className="btn btn-primary">
                         + Tambah data
-              </button>
+                    </button>
                 </div>
                 <h2>
-                    Tabel Kepedulian
+                    Tabel Campaign
                 </h2>
                 <table className="table">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">id Kepedulian</th>
-                            <th scope="col">Nama Kepedulian</th>
+                            <th scope="col">id Campaign</th>
+                            <th scope="col">Nama Campaign</th>
                             <th scope="col">Target</th>
                             <th scope="col">Deadline</th>
                             <th scope="col">Aksi</th>
@@ -97,22 +121,22 @@ function FormTabel(props) {
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleTambah} />
                             </div>
                             <Modal.Body>
-                                <form action="https://donasi.aqlpeduli.or.id/addCampaign?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc" method="POST">
+                                <form onSubmit={handleAddCampaign} /* action="https://donasi.aqlpeduli.or.id/addCampaign?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc" method="POST"*/>
                                     {/* <input type="number" name="id_campaign" className="d-none" value={0} /> */}
                                     <div className="mb-3">
                                         <label htmlFor="recipient-name" className="col-form-label">Nama Campaign:</label>
-                                        <input type="text" className="form-control" id="recipient-name" name="campaign_name" />
+                                        <input type="text" className="form-control" id="recipient-name" name="campaign_name" onChange={onChangeAddCampaign} />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="message-text" className="col-form-label">Target:</label>
-                                        <input type="number" className="form-control" id="message-text" name="target" />
+                                        <input type="number" className="form-control" id="message-text" name="target" onChange={onChangeAddCampaign} />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="message-text" className="col-form-label">Deadline:</label>
-                                        <input type="date" className="form-control" id="message-text" name="deadline" />
+                                        <input type="date" className="form-control" id="message-text" name="deadline" onChange={onChangeAddCampaign} />
                                     </div>
                                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleTambah} style={{ marginRight: `1rem` }}>Tutup</button>
-                                    <button type="submit" className="btn btn-primary">Tambah</button>
+                                    <button type="submit" className="btn btn-primary" id="tambahCampaign">Tambah</button>
                                 </form>
                             </Modal.Body>
                         </Modal>

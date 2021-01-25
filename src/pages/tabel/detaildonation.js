@@ -11,15 +11,15 @@ function DetailDonation(props) {
     }
     const data = props.location.state.data
     const handleOpen = () => setOpen(prev => !prev)
-    const handleDeleteDonation = useCallback((namaDonatur) => {
+    const handleDeleteDonation = (e) => {
         const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc'
-        // fetch(`https://donasi.aqlpeduli.or.id/deleteCampaign?token=${token}&id=${idcamp}`, {
-        //     method: "DELETE",
-        // }).then(res => {
-        //     console.log(res)
-        //     window.location.href = "http://localhost:3000/tabel/getCampaign"
-        // })
-    }, [])
+        fetch(`https://donasi.aqlpeduli.or.id/deleteDonation?token=${token}&id=${data.id}`, {
+            method: "DELETE",
+        }).then(res => {
+            console.log(res)
+            window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${data.idcamp}`
+        })
+    }
     return (
         <Layout>
             <div className="row w-100 mb-4">
@@ -32,6 +32,10 @@ function DetailDonation(props) {
                 </div>
             </div>
             {/* <form> */}
+            <div className="mb-3 d-flex">
+                <div className="mr-4 pr-4"><h3>Id:</h3></div>   
+                <div className="ml-4"><h3><strong>   {data.id}</strong></h3></div>
+            </div>
             <div className="mb-3">
                 <label htmlFor="recipient-name" className="col-form-label">Nama:</label>
                 <input type="text" className="form-control" id="recipient-name" defaultValue={data.nama} />
@@ -59,7 +63,7 @@ function DetailDonation(props) {
                 <Modal.Body>Yakin ingin menghapus data donation dari Sdr/i. <strong>{data.nama}</strong>?</Modal.Body>
                 <Modal.Footer>
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleOpen}>Tutup</button>
-                    <button type="button" className="btn btn-danger" onClick={() => handleDeleteDonation(data.nama)}>Hapus</button>
+                    <button type="button" className="btn btn-danger" onClick={() => handleDeleteDonation(data.id)}>Hapus</button>
                 </Modal.Footer>
             </Modal>
         </Layout>
