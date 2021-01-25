@@ -17,7 +17,7 @@ function DetailCampaign(props) {
             method: "DELETE",
         }).then(res => {
             console.log(res)
-            window.location.href = "http://localhost:3000/tabel/getCampaign"
+            window.location.href = "https://admin-donasi.aqlpeduli.or.id/tabel/getCampaign"
         })
     }, [])
     return (
@@ -30,6 +30,10 @@ function DetailCampaign(props) {
                     <h3>Detail Campaign</h3>
                     <hr className="w-100"/>
                 </div>
+            </div>
+            <div className="mb-3 d-flex">
+                <div className="mr-4 pr-4"><h3>Id Campaign:</h3></div>   
+                <div className="ml-4"><h3><strong>   {data.idcamp}</strong></h3></div>
             </div>
             <form>
                 <div className="mb-3">

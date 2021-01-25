@@ -12,9 +12,14 @@ function FormTabel(props) {
     const [campaign, setCampaign] = useState([])
     const [ispoen, setIsopen] = useState(false)
     const [loading, setLoading] = useState(true)
-    // const [ispoenaksi, setIsopenaksi] = useState(false)
-    // const [isaksi, setIsaksi] = useState(false)
-    // const [isShowaksi, setIsshowaksi] = useState([])
+    const [tambah, setTambah] = useState(false)
+    const [formtambah, setFormtambah] = useState({
+        name: '',
+        id_campaign: 0,
+        email: '',
+        phone_number: '',
+        amount: 0
+    })
     var banyakitem = 0
     const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc'
     useEffect(() => {
@@ -35,7 +40,6 @@ function FormTabel(props) {
             for (var i = 0; i < banyakitem; i++) {
                 arritem.push(false)
             }
-            // setIsshowaksi(arritem)
         })
         fetch(`https://donasi.aqlpeduli.or.id/getCampaign?token=${token}`).then(res => res.json()).then(res2 => {
             setCampaign(res2)
@@ -44,15 +48,29 @@ function FormTabel(props) {
     const toggleOpen = () => {
         setIsopen(prev => !prev)
     }
-    // const toggleAksiOpen = (index) => {
-    //     const arritemaksi = isShowaksi
-    //     arritemaksi[index] = !arritemaksi[index]
-    //     setIsshowaksi(arritemaksi)
-    //     setIsaksi(prev => !prev)
-    // }
-    // const editAksiModal = () => setIsopenaksi(prev => !prev)
+    const handleTambahDonation = () => setTambah(prev => !prev)
+    const onChangeAddDonation = (e) => {
+        setFormtambah({
+            ...formtambah,
+            [e.target.name]: e.target.value
+        })
+    }
+    const handleAddDonation = (e) => {
+        fetch(`https://donasi.aqlpeduli.or.id/addDonation?token=${token}`, {
+            method: "POST",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formtambah)
+        }).then(res => {
+            console.log(res.json())
+            setTimeout(()=>{
+                window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${formtambah.id_campaign}`
+            }, 1500)
+        })
+        e.preventDefault()
+    }
     const menuClass = `dropdown-menu${ispoen ? " show" : ""}`;
-    // const menuAksiClass = `dropdown-menu${isaksi ? " show" : ""}`;
     return (
         <>
             <Layout active={act}>
@@ -71,12 +89,13 @@ function FormTabel(props) {
                                 )
                             })
                         }
-                        {/* <a className="dropdown-item" href={`/tabel/getDonation/${0}`}>0</a>
-                        <a className="dropdown-item" href={`/tabel/getDonation/${1}`}>1</a>
-                        <a className="dropdown-item" href={`/tabel/getDonation/${2}`}>2</a> */}
                     </div>
                 </div>
-
+                <div className="w-auto h-auto position-absolute" style={{ top: `1rem`, right: `2rem` }} onClick={handleTambahDonation} data-bs-toggle="modal" data-bs-target="#tambahDonationModal">
+                    <button className="btn btn-primary">
+                        + Tambah data
+                    </button>
+                </div>
                 <table className="table">
                     <thead>
                         <tr>
@@ -99,69 +118,60 @@ function FormTabel(props) {
                             :
                             donasi.map((doc, idx) => {
                                 return (<tr key={idx}>
-                            <th scope="row">{doc.id}</th>
-                            <td>{doc.idcamp}</td>
-                            <td>{doc.nama}</td>
-                            <td>{doc.email}</td>
-                            <td>{doc.nohp}</td>
-                            <td>{doc.amount}</td>
-                            <td>
-                                <div className="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    {/* <div className="dropstart" onClick={() => toggleAksiOpen(idx)}> */}
-                                    <Link to={{
-                                        pathname: `/tabel/getDonation/detail/${doc.idcamp}`,
-                                        state: {
-                                            data: doc
-                                        }
-                                    }}>
-                                        <button type="button" className="btn btn-warning" /*className="btn btn-warning mr-1 dropdown-toggle"*/ aria-haspopup="true" aria-expanded="false"><i className="fa fa-cog" /*role="button" id="dropdownAksiLink" data-toggle="dropdown"*/></i></button>
-                                    </Link>
-                                    {/* {isShowaksi[idx] ?
-                                                    <div className={menuAksiClass} id="dd-menu" aria-labelledby="dropdownMenuLink">
-                                                        <a className="dropdown-item" key={idx} onClick={editAksiModal} data-bs-toggle="modal" data-bs-target="#editAksiDonasi" style={{ cursor: `pointer` }}>Edit</a>
-                                                        <a className="dropdown-item" key={idx} href={`/tabel/getDonation/${doc.id}`}>Hapus</a>
-                                                    </div>
-                                                    :
-                                                    null
-                                                } */}
-                                    {/* </div> */}
-                                    <button type="button" className="btn btn-success"><i className="fa fa-whatsapp"></i></button>
-                                    <button type="button" className="btn btn-danger"><i className="fa fa-envelope"></i></button>
-                                </div>
-                                {/* <Modal show={ispoenaksi} onHide={editAksiModal}>
-                                            <div className="modal-header">
-                                                <h5 className="modal-title" id="exampleModalLabel">Konfirmasi hapus</h5>
-                                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={editAksiModal} />
-                                            </div>
-                                            <Modal.Body>
-                                                <form>
-                                                    <div className="mb-3">
-                                                        <label htmlFor="recipient-name" className="col-form-label">Nama:</label>
-                                                        <input type="text" className="form-control" id="recipient-name" value={donasi[idx].nama} />
-                                                    </div>
-                                                    <div className="mb-3">
-                                                        <label htmlFor="message-text" className="col-form-label">Email:</label>
-                                                        <input className="form-control" id="message-text" value={donasi[idx].email} />
-                                                    </div>
-                                                    <div className="mb-3">
-                                                        <label htmlFor="message-text" className="col-form-label">No handphone:</label>
-                                                        <input className="form-control" id="message-text" value={donasi[idx].nohp} />
-                                                    </div>
-                                                    <div className="mb-3">
-                                                        <label htmlFor="message-text" className="col-form-label">Amount:</label>
-                                                        <input type="number" className="form-control" id="message-text" value={donasi[idx].amount} />
-                                                    </div>
-                                                </form>
-                                            </Modal.Body>
-                                            <Modal.Footer>
-                                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={editAksiModal}>Tutup</button>
-                                                <button type="button" className="btn btn-primary">Submit</button>
-                                            </Modal.Footer>
-                                        </Modal> */}
-                            </td>
-                        </tr>)
+                                    <th scope="row">{doc.id}</th>
+                                    <td>{doc.idcamp}</td>
+                                    <td>{doc.nama}</td>
+                                    <td>{doc.email}</td>
+                                    <td>{doc.nohp}</td>
+                                    <td>{doc.amount}</td>
+                                    <td>
+                                        <div className="btn-group" role="group" aria-label="Basic mixed styles example">
+                                            <Link to={{
+                                                pathname: `/tabel/getDonation/detail/${doc.idcamp}`,
+                                                state: {
+                                                    data: doc
+                                                }
+                                            }}>
+                                                <button type="button" className="btn btn-warning" /*className="btn btn-warning mr-1 dropdown-toggle"*/ aria-haspopup="true" aria-expanded="false"><i className="fa fa-cog" /*role="button" id="dropdownAksiLink" data-toggle="dropdown"*/></i></button>
+                                            </Link>
+                                            <button type="button" className="btn btn-success"><i className="fa fa-whatsapp"></i></button>
+                                            <button type="button" className="btn btn-danger"><i className="fa fa-envelope"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>)
                             })
                         }
+                        <Modal show={tambah} onHide={handleTambahDonation}>
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Tambah Data</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleTambahDonation} />
+                            </div>
+                            <Modal.Body>
+                                <form onSubmit={handleAddDonation} /* action="https://donasi.aqlpeduli.or.id/addCampaign?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc" method="POST"*/>
+                                    <div className="mb-3">
+                                        <input type="number" name="id_campaign" placeholder="ID Campaign" onChange={onChangeAddDonation} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="recipient-name" className="col-form-label">Nama:</label>
+                                        <input type="text" className="form-control" id="name" name="name" onChange={onChangeAddDonation} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="message-text" className="col-form-label">Email:</label>
+                                        <input type="text" className="form-control" id="email" name="email" onChange={onChangeAddDonation} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="message-text" className="col-form-label">No Handphone:</label>
+                                        <input type="tel" className="form-control" id="phone_number" name="phone_number" onChange={onChangeAddDonation} />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="message-text" className="col-form-label">Amount:</label>
+                                        <input type="number" className="form-control" id="amount" name="amount" onChange={onChangeAddDonation} />
+                                    </div>
+                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleTambahDonation} style={{ marginRight: `1rem` }}>Tutup</button>
+                                    <button type="submit" className="btn btn-primary" id="tambahCampaign">Tambah</button>
+                                </form>
+                            </Modal.Body>
+                        </Modal>
                     </tbody>
                 </table>
             </Layout>
