@@ -1,7 +1,41 @@
 import { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import "./login.css"
 
 function Login(props) {
+    const hist = useHistory()
+    const [formlogin, setFormlogin] = useState({
+        email: '',
+        password: ''
+    })
+    const onChangeLogin = (e) => {
+        setFormlogin({
+            ...formlogin,
+            [e.target.name]: e.target.value
+        })
+    }
+    const onHandleLoginSubmit = (e) => {
+        fetch('https://donasi.aqlpeduli.or.id/login', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formlogin)
+        })
+        .then(res => {
+            return res.json()
+        })
+        .then(resjson=>{
+            console.log(resjson.access_token)
+            if(resjson.access_token){
+                hist.push('/dashboard')
+            }
+            else{
+                hist.push('/')
+            }
+        })
+        e.preventDefault()
+    }
     return (
         <>
             <div className="container">
@@ -10,16 +44,16 @@ function Login(props) {
                         <h1 className="text-center login-title loginTitle">Sign in to Form-Donasi AQL</h1>
                         <div className="account-wall accountWall">
                             <img className="profile-img profileImg" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120" alt="logo-login" />
-                            <form className="form-signin formSignin">
-                                <input type="text" className="form-control formControl" placeholder="Email" required autofocus />
-                                <input type="password" className="form-control formControl" placeholder="Password" required />
-                                <a href="/dashboard" style={{ color: `white`, textDecoration: `none` }}><button className="btn btn-lg btn-primary w-100" type="button">
+                            <form className="form-signin formSignin" onSubmit={onHandleLoginSubmit}>
+                                <input type="text" name="email" onChange={onChangeLogin} className="form-control formControl" placeholder="Email" required autofocus />
+                                <input type="password" name="password" onChange={onChangeLogin} className="form-control formControl" placeholder="Password" required />
+                                <a type="submit" style={{ color: `white`, textDecoration: `none` }}><button className="btn btn-lg btn-primary w-100">
                                     Sign in</button></a>
-                                <label className="checkbox pull-left">
-                                    <input type="checkbox" defaultValue="remember-me" />
-                                    Remember me
-                                </label>
                             </form>
+                            <label className="checkbox pull-left">
+                                <input type="checkbox" defaultValue="remember-me" />
+                                    Remember me
+                            </label>
                         </div>
                         <a href="/dashboard" className="text-center new-account newAccount">Create an account </a>
                     </div>

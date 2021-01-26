@@ -17,7 +17,12 @@ function DetailCampaign(props) {
             method: "DELETE",
         }).then(res => {
             console.log(res)
-            window.location.href = "https://admin-donasi.aqlpeduli.or.id/tabel/getCampaign"
+            if(process.env.NODE_ENV == "production"){
+                window.location.href = "https://admin-donasi.aqlpeduli.or.id/tabel/getCampaign"
+            }
+            else if(process.env.NODE_ENV == "development"){
+                window.location.href = "http://localhost:3000/tabel/getCampaign"
+            }
         })
     }, [])
     return (
@@ -48,7 +53,7 @@ function DetailCampaign(props) {
                     <label htmlFor="message-text" className="col-form-label">Deadline:</label>
                     <input type="date" className="form-control" id="message-text" defaultValue={data.deadline} />
                 </div>
-                <button type="button" className="btn btn-warning w-25" style={{ marginRight: `1rem` }}>Edit</button>
+                <button type="button" className="btn btn-success w-25" style={{ marginRight: `1rem` }}>Edit & Simpan</button>
                 <button type="button" className="btn btn-danger" onClick={handleOpen} data-bs-toggle="modal" data-bs-target="#hapusModal">Hapus</button>
             </form>
             <Modal show={open} onHide={handleOpen}>

@@ -17,14 +17,20 @@ function DetailDonation(props) {
             method: "DELETE",
         }).then(res => {
             console.log(res)
-            window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${data.idcamp}`
+            if (process.env.NODE_ENV == "production") {
+                window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${data.idcamp}`
+            }
+            else if (process.env.NODE_ENV == "development") {
+                window.location.href = `http://localhost:3000/tabel/getDonation/${data.idcamp}`
+            }
+            // window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${data.idcamp}`
         })
     }
     return (
         <Layout>
             <div className="row w-100 mb-4">
                 <div className="col-2 w-100">
-                    <Link to="/tabel/getDonation/0" style={{ textDecoration: `none` }}>
+                    <Link to={`/tabel/getDonation/${data.idcamp}`} style={{ textDecoration: `none` }}>
                         <i className="fa fa-chevron-left fa--2x"></i> Back
                     </Link>
                     <h3>Detail Donation</h3>
@@ -52,7 +58,7 @@ function DetailDonation(props) {
                 <label htmlFor="message-text" className="col-form-label">Amount:</label>
                 <input type="number" className="form-control" id="message-text" defaultValue={data.amount} />
             </div>
-            <button type="button" className="btn btn-warning w-25" style={{ marginRight: `1rem` }}>Edit</button>
+            <button type="button" className="btn btn-success w-25" style={{ marginRight: `1rem` }}>Edit & Simpan</button>
             <button type="button" className="btn btn-danger" onClick={handleOpen} data-bs-toggle="modal" data-bs-target="#hapusModal">Hapus</button>
             {/* </form> */}
             <Modal show={open} onHide={handleOpen}>
