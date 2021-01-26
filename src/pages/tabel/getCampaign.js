@@ -13,6 +13,7 @@ function FormTabel(props) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(true)
     const [form, setForm] = useState({
+        id: 0,
         campaign_name: '',
         target: 0,
         deadline: ''
@@ -25,6 +26,7 @@ function FormTabel(props) {
                 idcamp: doc.id,
                 namacamp: doc.campaign_name,
                 target: doc.target,
+                terkumpul: doc.collected,
                 deadline: doc.deadline
             }
         ))).then(items => {
@@ -32,24 +34,23 @@ function FormTabel(props) {
             setLoading(false)
         })
     }, [])
-    // useEffect(()=>{
-    //     var submitBtn = document.getElementById("tambahCampaign")
-    //     submitBtn.addEventListener('click',() => {
-
-    //     })
-    // })
     const handleAddCampaign = (e) => {
         fetch(`https://donasi.aqlpeduli.or.id/addCampaign?token=${token}`, {
             method: "POST",
-            headers:{
+            headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(form)
         }).then(res => {
             console.log(res)
-            setTimeout(()=>{
-                window.location.href = "https://admin-donasi.aqlpeduli.or.id/tabel/getCampaign"
-            }, 2500)
+            setTimeout(() => {
+                if(process.env.NODE_ENV == "production"){
+                    window.location.href = "https://admin-donasi.aqlpeduli.or.id/tabel/getCampaign"
+                }
+                else if(process.env.NODE_ENV == "development"){
+                    window.location.href = "http://localhost:3000/tabel/getCampaign"
+                }
+            }, 1500)
         })
         e.preventDefault()
     }
@@ -73,10 +74,11 @@ function FormTabel(props) {
                 <table className="table">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
+                            <th scope="col">No.</th>
                             <th scope="col">id Campaign</th>
                             <th scope="col">Nama Campaign</th>
                             <th scope="col">Target</th>
+                            <th scope="col">Terkumpul</th>
                             <th scope="col">Deadline</th>
                             <th scope="col">Aksi</th>
                         </tr>
@@ -92,10 +94,11 @@ function FormTabel(props) {
                             campaign.map((doc, idx) => {
                                 return (
                                     <tr key={idx}>
-                                        <th scope="row">1</th>
-                                        <td>{doc.idcamp}</td>
+                                        <th scope="row">{idx+1}</th>
+                                        <td style={{textAlign:`center`}}>{doc.idcamp}</td>
                                         <td>{doc.namacamp}</td>
                                         <td>{doc.target}</td>
+                                        <td style={{textAlign:`center`}}>{doc.terkumpul}</td>
                                         <td>{doc.deadline}</td>
                                         <td>
                                             <div className="btn-group" role="group" aria-label="Basic mixed styles example">
@@ -122,17 +125,19 @@ function FormTabel(props) {
                             </div>
                             <Modal.Body>
                                 <form onSubmit={handleAddCampaign} /* action="https://donasi.aqlpeduli.or.id/addCampaign?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc" method="POST"*/>
-                                    {/* <input type="number" name="id_campaign" className="d-none" value={0} /> */}
                                     <div className="mb-3">
-                                        <label htmlFor="recipient-name" className="col-form-label">Nama Campaign:</label>
+                                        <input type="number" className="form-control" name="id" placeholder="ID Campaign (wajib diisi)" onChange={onChangeAddCampaign} required />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="recipient-name" className="col-form-label"><strong>Nama Campaign:</strong></label>
                                         <input type="text" className="form-control" id="recipient-name" name="campaign_name" onChange={onChangeAddCampaign} />
                                     </div>
                                     <div className="mb-3">
-                                        <label htmlFor="message-text" className="col-form-label">Target:</label>
+                                        <label htmlFor="message-text" className="col-form-label"><strong>Target:</strong></label>
                                         <input type="number" className="form-control" id="message-text" name="target" onChange={onChangeAddCampaign} />
                                     </div>
                                     <div className="mb-3">
-                                        <label htmlFor="message-text" className="col-form-label">Deadline:</label>
+                                        <label htmlFor="message-text" className="col-form-label"><strong>Deadline:</strong></label>
                                         <input type="date" className="form-control" id="message-text" name="deadline" onChange={onChangeAddCampaign} />
                                     </div>
                                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleTambah} style={{ marginRight: `1rem` }}>Tutup</button>

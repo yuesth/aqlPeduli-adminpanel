@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import Layout from "../../layout"
 import Modal from "react-bootstrap/Modal"
 import { Link } from "react-router-dom"
-
+const Swal = window.swal
 
 function FormTabel(props) {
     const act = "tabelgetdonation"
@@ -29,6 +29,7 @@ function FormTabel(props) {
                 idcamp: doc.id_campaign,
                 nama: doc.name,
                 amount: doc.amount,
+                paid: doc.paid,
                 email: doc.email,
                 nohp: doc.phone_number,
             }
@@ -58,17 +59,49 @@ function FormTabel(props) {
     const handleAddDonation = (e) => {
         fetch(`https://donasi.aqlpeduli.or.id/addDonation?token=${token}`, {
             method: "POST",
-            headers:{
+            headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(formtambah)
         }).then(res => {
             console.log(res.json())
-            setTimeout(()=>{
-                window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${formtambah.id_campaign}`
+            setTimeout(() => {
+                if (process.env.NODE_ENV == "production") {
+                    window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${formtambah.id_campaign}`
+                }
+                else if (process.env.NODE_ENV == "development") {
+                    window.location.href = `http://localhost:3000/tabel/getDonation/${formtambah.id_campaign}`
+                }
             }, 1500)
         })
         e.preventDefault()
+    }
+    const onChangeBayar = (idDonatur, idCamp) => {
+        Swal.fire({
+            title: 'Simpan sudah membayar?',
+            showDenyButton: true,
+            // showCancelButton: true,
+            confirmButtonText: `Simpan`,
+            denyButtonText: `Buang`,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`https://donasi.aqlpeduli.or.id/setPaidDonation?token=${token}&id=${idDonatur}`, {
+                    method: 'PUT'
+                }).then(res => {
+                    console.log(res)
+                    if (process.env.NODE_ENV == "production") {
+                        window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${idCamp}`
+                    }
+                    else if (process.env.NODE_ENV == "development") {
+                        window.location.href = `http://localhost:3000/tabel/getDonation/${idCamp}`
+                    }
+                })
+            }
+            else if(result.isDenied){
+                var paidBtn = document.getElementById("paidDonasi")
+                paidBtn.checked = false
+            }
+        })
     }
     const menuClass = `dropdown-menu${ispoen ? " show" : ""}`;
     return (
@@ -105,6 +138,7 @@ function FormTabel(props) {
                             <th scope="col">Email</th>
                             <th scope="col">Nomor Handphone</th>
                             <th scope="col">Amount</th>
+                            <th scope="col">Status</th>
                             <th scope="col">Aksi</th>
                         </tr>
                     </thead>
@@ -124,6 +158,22 @@ function FormTabel(props) {
                                     <td>{doc.email}</td>
                                     <td>{doc.nohp}</td>
                                     <td>{doc.amount}</td>
+                                    <td style={{ textAlign: `center` }}>
+                                        <div className="form-check form-switch">
+                                            {
+                                                doc.paid == 'null' || doc.paid == null || doc.paid == 0
+                                                    ?
+                                                    <>
+                                                        <input className="form-check-input" type="checkbox" id="paidDonasi" onChange={() => onChangeBayar(doc.id, doc.idcamp)} />
+                                                    </>
+                                                    :
+                                                    <>
+                                                        <input className="form-check-input" type="checkbox" id="paidDonasi" checked disabled />
+                                                    </>
+                                            }
+
+                                        </div>
+                                    </td>
                                     <td>
                                         <div className="btn-group" role="group" aria-label="Basic mixed styles example">
                                             <Link to={{
@@ -149,7 +199,17 @@ function FormTabel(props) {
                             <Modal.Body>
                                 <form onSubmit={handleAddDonation} /* action="https://donasi.aqlpeduli.or.id/addCampaign?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc" method="POST"*/>
                                     <div className="mb-3">
-                                        <input type="number" name="id_campaign" placeholder="ID Campaign" onChange={onChangeAddDonation} />
+                                        <select className="form-select" aria-label="Default select example" name="id_campaign" onChange={onChangeAddDonation}>
+                                            <option selected>Pilih Campaign</option>
+                                            {
+                                                campaign.map((doc, idx) => {
+                                                    return (
+                                                        <option key={idx} value={doc.id}>{doc.campaign_name}</option>
+                                                    )
+                                                })
+                                            }
+                                        </select>
+                                        {/* <input type="number" name="id_campaign" placeholder="ID Campaign" onChange={onChangeAddDonation} /> */}
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="recipient-name" className="col-form-label">Nama:</label>
