@@ -6,6 +6,10 @@ import Modal from "react-bootstrap/Modal"
 function DetailCampaign(props) {
     const [open, setOpen] = useState(false)
     const hist = useHistory()
+    const tok = JSON.parse(sessionStorage.getItem('token'))
+    if(tok == null || tok == "null"){
+        hist.push('/')
+    }
     if (!props.location.state) {
         hist.push('/tabel/getCampaign')
     }
