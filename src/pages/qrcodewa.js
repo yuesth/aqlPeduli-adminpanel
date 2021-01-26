@@ -1,4 +1,6 @@
 import Layout from "../layout"
+import { useHistory } from "react-router-dom"
+
 
 function LoadingQrcode() {
     return (
@@ -8,9 +10,14 @@ function LoadingQrcode() {
     )
 }
 function Qrcodewa(props) {
+    const hist = useHistory()
     var act = "undefined"
     if (props.location.state) {
         act = props.location.state.active
+    }
+    const tok = JSON.parse(sessionStorage.getItem('token'))
+    if(tok == null || tok == "null"){
+        hist.push('/')
     }
     return (
         <>

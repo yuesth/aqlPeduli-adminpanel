@@ -1,6 +1,12 @@
+import { useHistory } from "react-router-dom"
 import Sidebar from "./sidebar"
 
 function Layout({ active, children }) {
+    const hist = useHistory()
+    const onSignout = ()=>{
+        sessionStorage.removeItem('token')
+        hist.push('/')
+    }
     return (
         <>
             <header className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
@@ -11,7 +17,7 @@ function Layout({ active, children }) {
                 {/* <input className="form-control form-control-dark w-80" type="text" placeholder="Search" aria-label="Search" /> */}
                 <ul className="navbar-nav px-3">
                     <li className="nav-item text-nowrap">
-                        <a className="nav-link" href="/">Sign out</a>
+                        <a className="nav-link" onClick={onSignout} style={{cursor:`pointer`}} >Sign out</a>
                     </li>
                 </ul>
             </header>

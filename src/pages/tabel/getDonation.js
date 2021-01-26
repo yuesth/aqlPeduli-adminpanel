@@ -2,10 +2,15 @@
 import { useState, useEffect } from "react"
 import Layout from "../../layout"
 import Modal from "react-bootstrap/Modal"
-import { Link } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 const Swal = window.swal
 
 function FormTabel(props) {
+    const hist = useHistory()
+    const tok = JSON.parse(sessionStorage.getItem('token'))
+    if(tok == null || tok == "null"){
+        hist.push('/')
+    }
     const act = "tabelgetdonation"
     const id = props.match.params.id
     const [donasi, setDonasi] = useState([])
@@ -56,24 +61,42 @@ function FormTabel(props) {
             [e.target.name]: e.target.value
         })
     }
-    const handleAddDonation = (e) => {
+    const handleSubmitDonation = (e) => {
+        const data = {
+            donatur: formtambah.name,
+            namakeped: campaign.campaign_name,
+            jumlah: formtambah.amount,
+            nohp: formtambah.phone_number
+        }
         fetch(`https://donasi.aqlpeduli.or.id/addDonation?token=${token}`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(formtambah)
-        }).then(res => {
-            console.log(res.json())
-            setTimeout(() => {
-                if (process.env.NODE_ENV == "production") {
-                    window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${formtambah.id_campaign}`
-                }
-                else if (process.env.NODE_ENV == "development") {
-                    window.location.href = `http://localhost:3000/tabel/getDonation/${formtambah.id_campaign}`
-                }
-            }, 1500)
         })
+            .then(res => {
+                console.log(res.json())
+                setTimeout(() => {
+                    if (process.env.NODE_ENV == "production") {
+                        window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${formtambah.id_campaign}`
+                    }
+                    else if (process.env.NODE_ENV == "development") {
+                        window.location.href = `http://localhost:3000/tabel/getDonation/${formtambah.id_campaign}`
+                    }
+                }, 2000)
+            })
+        fetch(`https://admin-donasi.aqlpeduli.or.id/wa-blast/send-message-from-admin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then(resjson => {
+                console.log("data untuk wa: " + resjson)
+            })
         e.preventDefault()
     }
     const onChangeBayar = (idDonatur, idCamp) => {
@@ -199,7 +222,7 @@ function FormTabel(props) {
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleTambahDonation} />
                             </div>
                             <Modal.Body>
-                                <form onSubmit={handleAddDonation} /* action="https://donasi.aqlpeduli.or.id/addCampaign?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc" method="POST"*/>
+                                <form onSubmit={handleSubmitDonation} /* action="https://donasi.aqlpeduli.or.id/addCampaign?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc" method="POST"*/>
                                     <div className="mb-3">
                                         <select className="form-select" aria-label="Default select example" name="id_campaign" onChange={onChangeAddDonation}>
                                             <option selected>Pilih Campaign</option>

@@ -1,9 +1,16 @@
+import { useHistory } from "react-router-dom"
 import Layout from "../layout"
 
 function Dashboard(props) {
+    const hist = useHistory()
     var act = "undefined"
     if(props.location.state){
         act = props.location.state.active
+    }
+    const tok = JSON.parse(sessionStorage.getItem('token'))
+    console.log("token dari db: "+ tok)
+    if(tok == null || tok == "null"){
+        hist.push('/')
     }
     return (
         <>

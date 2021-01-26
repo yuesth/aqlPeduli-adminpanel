@@ -9,6 +9,10 @@ function FormTabel(props) {
         act = props.location.state.active
     }
     const hist = useHistory()
+    const tok = JSON.parse(sessionStorage.getItem('token'))
+    if(tok == null || tok == "null"){
+        hist.push('/')
+    }
     const [campaign, setCampaign] = useState([])
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(true)

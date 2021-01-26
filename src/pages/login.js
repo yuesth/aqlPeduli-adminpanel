@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import "./login.css"
 
-function Login(props) {
+function Login() {
     const hist = useHistory()
     const [formlogin, setFormlogin] = useState({
         email: '',
@@ -22,18 +22,27 @@ function Login(props) {
             },
             body: JSON.stringify(formlogin)
         })
-        .then(res => {
-            return res.json()
-        })
-        .then(resjson=>{
-            console.log(resjson.access_token)
-            if(resjson.access_token){
-                hist.push('/dashboard')
-            }
-            else{
-                hist.push('/')
-            }
-        })
+            .then(res => {
+                return res.json()
+            })
+            .then(resjson => {
+                // console.log(resjson)
+                if(resjson.access_token){
+                    sessionStorage.setItem('token', JSON.stringify(resjson.access_token))
+                    console.log(JSON.parse(sessionStorage.getItem('token')))
+                    hist.push('/dashboard')
+                }
+                else{
+                    hist.push('/')
+                }
+                // setToken(resjson.access_token)
+                // if (resjson.access_token) {
+                //     hist.push('/dashboard')
+                // }
+                // else {
+                //     hist.push('/')
+                // }
+            })
         e.preventDefault()
     }
     return (
@@ -41,19 +50,19 @@ function Login(props) {
             <div className="container">
                 <div className="row justify-content-center pt-5">
                     <div className="col-sm-6 col-md-4 col-md-offset-4">
-                        <h1 className="text-center login-title loginTitle">Sign in to Form-Donasi AQL</h1>
+                        {/* <h1 className="text-center login-title loginTitle">Sign in to Form-Donasi AQL</h1> */}
                         <div className="account-wall accountWall">
-                            <img className="profile-img profileImg" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120" alt="logo-login" />
+                            <img className="profile-img profileImg" src={`${process.env.PUBLIC_URL}/aql-wa.jpg`} alt="logo-login" />
                             <form className="form-signin formSignin" onSubmit={onHandleLoginSubmit}>
-                                <input type="text" name="email" onChange={onChangeLogin} className="form-control formControl" placeholder="Email" required autofocus />
+                                <input type="text" name="email" onChange={onChangeLogin} className="form-control formControl" placeholder="Email" required />
                                 <input type="password" name="password" onChange={onChangeLogin} className="form-control formControl" placeholder="Password" required />
-                                <a type="submit" style={{ color: `white`, textDecoration: `none` }}><button className="btn btn-lg btn-primary w-100">
+                                <a type="submit" style={{ color: `white`, textDecoration: `none`, width:`100%` }}><button className="btn btn-primary w-100">
                                     Sign in</button></a>
                             </form>
-                            <label className="checkbox pull-left">
+                            {/* <label className="checkbox pull-left">
                                 <input type="checkbox" defaultValue="remember-me" />
                                     Remember me
-                            </label>
+                            </label> */}
                         </div>
                         <a href="/dashboard" className="text-center new-account newAccount">Create an account </a>
                     </div>

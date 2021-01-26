@@ -1,11 +1,15 @@
 import { Link, useHistory } from 'react-router-dom'
 import Layout from '../../layout'
 import Modal from "react-bootstrap/Modal"
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 
 function DetailDonation(props) {
     const hist = useHistory()
     const [open, setOpen] = useState(false)
+    const tok = JSON.parse(sessionStorage.getItem('token'))
+    if(tok == null || tok == "null"){
+        hist.push('/')
+    }
     if (!props.location.state) {
         hist.push('/tabel/getDonation/0')
     }
