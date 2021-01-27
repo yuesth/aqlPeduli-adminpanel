@@ -99,7 +99,7 @@ function FormTabel(props) {
             })
         e.preventDefault()
     }
-    const onChangeBayar = (idDonatur, idCamp) => {
+    const onChangeBayar = (idDonatur, idCamp, index) => {
         Swal.fire({
             title: 'Simpan sudah membayar?',
             showDenyButton: true,
@@ -121,7 +121,7 @@ function FormTabel(props) {
                 })
             }
             else if (result.isDenied) {
-                var paidBtn = document.getElementsByClassName("paidDonasi")
+                var paidBtn = document.getElementsByClassName(`${index}`)
                 for (var i = 0; i < paidBtn.length; i++) {
                     paidBtn[i].checked = false
                 }
@@ -189,11 +189,11 @@ function FormTabel(props) {
                                                 doc.paid == 'null' || doc.paid == null || doc.paid == 0
                                                     ?
                                                     <>
-                                                        <input className="form-check-input paidDonasi" type="checkbox" id="paidDonasi" onChange={() => onChangeBayar(doc.id, doc.idcamp)} />
+                                                        <input className={`form-check-input paidDonasi ${idx}`} type="checkbox" id="paidDonasi" onChange={() => onChangeBayar(doc.id, doc.idcamp, idx)} />
                                                     </>
                                                     :
                                                     <>
-                                                        <input className="form-check-input paidDonasi" type="checkbox" id="paidDonasi" checked disabled />
+                                                        <input className="form-check-input paidDonasi dua" type="checkbox" id="paidDonasi" checked disabled />
                                                     </>
                                             }
 
