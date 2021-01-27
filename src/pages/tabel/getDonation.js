@@ -37,6 +37,7 @@ function FormTabel(props) {
                 paid: doc.paid,
                 email: doc.email,
                 nohp: doc.phone_number,
+                tanggal: doc.created_at
             }
         ))).then(items => {
             setDonasi(items)
@@ -128,6 +129,10 @@ function FormTabel(props) {
             }
         })
     }
+    const convertISOtoDate = (date)=>{
+        var d = new Date(date)
+        return d.getFullYear()+'-' + (d.getMonth()+1) + '-'+d.getDate();
+    }
     const menuClass = `dropdown-menu${ispoen ? " show" : ""}`;
     return (
         <>
@@ -159,6 +164,7 @@ function FormTabel(props) {
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">id_campaign</th>
+                            <th scope="col">Tanggal</th>
                             <th scope="col">Nama</th>
                             <th scope="col">Email</th>
                             <th scope="col">Nomor Handphone</th>
@@ -179,6 +185,7 @@ function FormTabel(props) {
                                 return (<tr key={idx}>
                                     <th scope="row">{doc.id}</th>
                                     <td>{doc.idcamp}</td>
+                                    <td>{convertISOtoDate(doc.tanggal)}</td>
                                     <td>{doc.nama}</td>
                                     <td>{doc.email}</td>
                                     <td>{doc.nohp}</td>
