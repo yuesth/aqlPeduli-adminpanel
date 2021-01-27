@@ -8,22 +8,25 @@ const Swal = window.swal
 function FormTabel(props) {
     const hist = useHistory()
     const tok = JSON.parse(sessionStorage.getItem('token'))
-    if(tok == null || tok == "null"){
+    if (tok == null || tok == "null") {
         hist.push('/')
     }
     const act = "tabelgetdonation"
     const id = props.match.params.id
     const [donasi, setDonasi] = useState([])
+    const [donasi2, setDonasi2] = useState([])
     const [campaign, setCampaign] = useState([])
     const [ispoen, setIsopen] = useState(false)
     const [loading, setLoading] = useState(true)
     const [tambah, setTambah] = useState(false)
+    const [paid, setPaid] = useState(null)
     const [formtambah, setFormtambah] = useState({
         name: '',
         id_campaign: 0,
         email: '',
         phone_number: '',
-        amount: 0
+        amount: 0,
+        paid: 0
     })
     var banyakitem = 0
     const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc'
@@ -41,6 +44,7 @@ function FormTabel(props) {
             }
         ))).then(items => {
             setDonasi(items)
+            setDonasi2(items)
             setLoading(false)
             banyakitem = items.length
             const arritem = []
@@ -63,12 +67,6 @@ function FormTabel(props) {
         })
     }
     const handleSubmitDonation = (e) => {
-        const data = {
-            donatur: formtambah.name,
-            namakeped: campaign.campaign_name,
-            jumlah: formtambah.amount,
-            nohp: formtambah.phone_number
-        }
         fetch(`https://donasi.aqlpeduli.or.id/addDonation?token=${token}`, {
             method: "POST",
             headers: {
@@ -87,39 +85,80 @@ function FormTabel(props) {
                     }
                 }, 2000)
             })
-        fetch(`https://admin-donasi.aqlpeduli.or.id/wa-blast/send-message-from-admin`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(res => res.json())
-            .then(resjson => {
-                console.log("data untuk wa: " + resjson)
-            })
         e.preventDefault()
     }
-    const onChangeBayar = (idDonatur, idCamp, index) => {
+    const onChangeBatalBayar = (idDonatur, idCamp, index) => {
+        Swal.fire({
+            title: 'Batalkan pembayaran?',
+            showDenyButton: true,
+            // showCancelButton: true,
+            confirmButtonText: `Batalkan`,
+            denyButtonText: `Cancel`,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`https://donasi.aqlpeduli.or.id/setUnPaidDonation?token=${token}&id=${idDonatur}`, {
+                    method: 'PUT'
+                })
+                    .then(res => {
+                        if (process.env.NODE_ENV == "production") {
+                            window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${idCamp}`
+                        }
+                        else if (process.env.NODE_ENV == "development") {
+                            window.location.href = `http://localhost:3000/tabel/getDonation/${idCamp}`
+                        }
+                    })
+            }
+            else if (result.isDenied) {
+                var paidBtn = document.getElementsByClassName(`${index}`)
+                for (var i = 0; i < paidBtn.length; i++) {
+                    paidBtn[i].checked = true
+                }
+            }
+        })
+    }
+
+    const onChangeBayar = (idDonatur, idCamp, index, donatur, campaign, amount, nohp) => {
+        const findkeped = campaign.find(x => x.id == idCamp)
+        const namakeped = findkeped.campaign_name
+        const data = {
+            donatur: donatur,
+            namakepedulian: namakeped,
+            jumlah: amount,
+            nohp: nohp
+        }
+        console.log("ini keped loh: " + data.namakepedulian)
         Swal.fire({
             title: 'Simpan sudah membayar?',
             showDenyButton: true,
-            // showCancelButton: true,
             confirmButtonText: `Simpan`,
-            denyButtonText: `Buang`,
+            denyButtonText: `Cancel`,
         }).then((result) => {
             if (result.isConfirmed) {
+                console.log("data send wa: \n" + data)
+                fetch(`https://admin-donasi.aqlpeduli.or.id/wa-blast/send-message-from-admin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(res => res.json())
+                    .then(resjson => {
+                        console.log("data untuk wa: " + resjson)
+                    })
                 fetch(`https://donasi.aqlpeduli.or.id/setPaidDonation?token=${token}&id=${idDonatur}`, {
                     method: 'PUT'
-                }).then(res => {
-                    console.log(res)
-                    if (process.env.NODE_ENV == "production") {
-                        window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${idCamp}`
-                    }
-                    else if (process.env.NODE_ENV == "development") {
-                        window.location.href = `http://localhost:3000/tabel/getDonation/${idCamp}`
-                    }
                 })
+                    .then(res => {
+                        setTimeout(() => {
+                            if (process.env.NODE_ENV == "production") {
+                                window.location.href = `https://admin-donasi.aqlpeduli.or.id/tabel/getDonation/${idCamp}`
+                            }
+                            else if (process.env.NODE_ENV == "development") {
+                                window.location.href = `http://localhost:3000/tabel/getDonation/${idCamp}`
+                            }
+                        }, 1000)
+                    })
             }
             else if (result.isDenied) {
                 var paidBtn = document.getElementsByClassName(`${index}`)
@@ -129,9 +168,20 @@ function FormTabel(props) {
             }
         })
     }
-    const convertISOtoDate = (date)=>{
+    const convertISOtoDate = (date) => {
         var d = new Date(date)
-        return d.getFullYear()+'-' + (d.getMonth()+1) + '-'+d.getDate();
+        return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    }
+    const onChangeFilter = (e) => {
+        const filtered = donasi2.filter(don => {
+            var s = `${don.paid}`
+            var ee = e.target.value
+            console.log("paid: " + don.paid)
+            // return don.paid == e.target.value
+            return ee.toLowerCase().includes(s.toLowerCase())
+        })
+        setPaid(e.target.value)
+        setDonasi(filtered)
     }
     const menuClass = `dropdown-menu${ispoen ? " show" : ""}`;
     return (
@@ -153,6 +203,14 @@ function FormTabel(props) {
                             })
                         }
                     </div>
+                </div>
+                <br />
+                <div className="w-25">
+                    <select className="form-select" aria-label="Default select example" onChange={onChangeFilter}>
+                        <option selected>Status Pembayaran</option>
+                        <option value={"01 null"}>Semua</option>
+                        <option value={"1"}>Terbayar</option>
+                    </select>
                 </div>
                 <div className="w-auto h-auto position-absolute" style={{ top: `1rem`, right: `2rem` }} onClick={handleTambahDonation} data-bs-toggle="modal" data-bs-target="#tambahDonationModal">
                     <button className="btn btn-primary">
@@ -196,11 +254,11 @@ function FormTabel(props) {
                                                 doc.paid == 'null' || doc.paid == null || doc.paid == 0
                                                     ?
                                                     <>
-                                                        <input className={`form-check-input paidDonasi ${idx}`} type="checkbox" id="paidDonasi" onChange={() => onChangeBayar(doc.id, doc.idcamp, idx)} />
+                                                        <input className={`form-check-input paidDonasi ${idx}`} type="checkbox" id="unpaidDonasi" onChange={() => onChangeBayar(doc.id, doc.idcamp, idx, doc.nama, campaign, doc.amount, doc.nohp)} />
                                                     </>
                                                     :
                                                     <>
-                                                        <input className="form-check-input paidDonasi dua" type="checkbox" id="paidDonasi" checked disabled />
+                                                        <input className="form-check-input paidDonasi dua" type="checkbox" id="paidDonasi" checked onChange={() => onChangeBatalBayar(doc.id, doc.idcamp, idx)} />
                                                     </>
                                             }
 
@@ -259,6 +317,7 @@ function FormTabel(props) {
                                         <label htmlFor="message-text" className="col-form-label">Amount:</label>
                                         <input type="number" className="form-control" id="amount" name="amount" onChange={onChangeAddDonation} />
                                     </div>
+                                    <input type="number" name="paid" className="d-none" defaultValue={0} />
                                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleTambahDonation} style={{ marginRight: `1rem` }}>Tutup</button>
                                     <button type="submit" className="btn btn-primary" id="tambahCampaign">Tambah</button>
                                 </form>

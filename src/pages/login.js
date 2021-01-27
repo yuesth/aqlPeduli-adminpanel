@@ -27,13 +27,15 @@ function Login() {
             })
             .then(resjson => {
                 // console.log(resjson)
-                if(resjson.access_token){
+                if (resjson.access_token) {
                     sessionStorage.setItem('token', JSON.stringify(resjson.access_token))
                     console.log(JSON.parse(sessionStorage.getItem('token')))
                     hist.push('/dashboard')
                 }
-                else{
-                    hist.push('/')
+                else {
+                    var alert = document.getElementById("alertLogin")
+                    alert.classList.add("show")
+                    // hist.push('/')
                 }
                 // setToken(resjson.access_token)
                 // if (resjson.access_token) {
@@ -56,7 +58,7 @@ function Login() {
                             <form className="form-signin formSignin" onSubmit={onHandleLoginSubmit}>
                                 <input type="text" name="email" onChange={onChangeLogin} className="form-control formControl" placeholder="Email" required />
                                 <input type="password" name="password" onChange={onChangeLogin} className="form-control formControl" placeholder="Password" required />
-                                <a type="submit" style={{ color: `white`, textDecoration: `none`, width:`100%` }}><button className="btn btn-primary w-100">
+                                <a type="submit" style={{ color: `white`, textDecoration: `none`, width: `100%` }}><button className="btn btn-primary w-100">
                                     Sign in</button></a>
                             </form>
                             {/* <label className="checkbox pull-left">
@@ -65,6 +67,11 @@ function Login() {
                             </label> */}
                         </div>
                         <a href="/dashboard" className="text-center new-account newAccount">Create an account </a>
+                        <br />
+                        <div className="alert alert-danger alert-dismissible fade" id="alertLogin" role="alert">
+                            Username/password salah!
+                            {/* <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" /> */}
+                        </div>
                     </div>
                 </div>
             </div>
