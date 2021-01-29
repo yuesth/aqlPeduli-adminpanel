@@ -3,10 +3,15 @@ import { Link } from 'react-router-dom'
 
 function Sidebar(props) {
     const [down, setDown] = useState(false)
+    const [camp, setCamp] = useState([])
     const setdown = () => {
         setDown(prev => !prev)
     }
     useEffect(() => {
+        const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc"
+        fetch(`https://donasi.aqlpeduli.or.id/getCampaign?token=${token}`).then(res => res.json()).then(resjson => {
+            setCamp(resjson)
+        })
         var link = document.getElementsByClassName("nav-link")
         for (var i = 0; i < link.length; i++) {
             var cur = link[i];
@@ -47,15 +52,23 @@ function Sidebar(props) {
                                 <i className="ml-2 fa fa-caret-up" />}
                         </a>
                         <div id="collTabel" className="collapse pl-3 nav-link show">
-                            <Link className="nav-link nav-tabel tabelgetdonation" to={{
-                                pathname: `/tabel/getDonation/${0}`,
-                                state: {
-                                    active: 'tabelgetdonation',
+                            {camp.map((doc, idx) => {
+                                if (idx == 0) {
+                                    return (
+                                        <Link className="nav-link nav-tabel tabelgetdonation" key={idx} to={{
+                                            pathname: `/tabel/getDonation/${doc.id}`,
+                                            state: {
+                                                active: 'tabelgetdonation',
+                                            }
+                                        }}>getDonation
+                                        </Link>
+                                    )
                                 }
-                            }}>getDonation</Link>
+                            })
+                            }
                             <Link className="nav-link nav-tabel tabelgetcampaign" to={{
-                                pathname:"/tabel/getCampaign",
-                                state:{
+                                pathname: "/tabel/getCampaign",
+                                state: {
                                     active: 'tabelgetcampaign'
                                 }
                             }}>getCampaign</Link>
