@@ -45,7 +45,8 @@ function FormTabel(props) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(form)
-        }).then(res => {
+        })
+        .then(res => {
             console.log(res)
             setTimeout(() => {
                 if(process.env.NODE_ENV == "production"){
@@ -114,8 +115,6 @@ function FormTabel(props) {
                                                 }}>
                                                     <button type="button" className="btn btn-warning mr-1" aria-haspopup="true" aria-expanded="false"><i className="fa fa-cog"></i></button>
                                                 </Link>
-                                                {/* <button type="button" className="btn btn-warning mr-1">Ubah</button> */}
-                                                {/* <button type="button" className="btn btn-danger" onClick={()=>handleDeleteCampaign(doc.idcamp)} onClick={handleTambah} data-bs-toggle="modal" data-bs-target="#hapusModal">Hapus</button> */}
                                             </div>
                                         </td>
                                     </tr>

@@ -11,7 +11,7 @@ function DetailDonation(props) {
         hist.push('/')
     }
     if (!props.location.state) {
-        hist.push('/tabel/getDonation/0')
+        hist.push('/tabel/getDonation/1')
     }
     const data = props.location.state.data
     const handleOpen = () => setOpen(prev => !prev)

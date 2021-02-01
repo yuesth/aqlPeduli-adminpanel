@@ -11,8 +11,8 @@ function FormTabel(props) {
     if (tok == null || tok == "null") {
         hist.push('/')
     }
-    const act = "tabelgetdonation"
     const id = props.match.params.id
+    const act = "tabelgetdonation"
     const [donasi, setDonasi] = useState([])
     const [donasi2, setDonasi2] = useState([])
     const [campaign, setCampaign] = useState([])
@@ -241,7 +241,7 @@ function FormTabel(props) {
                             :
                             donasi.map((doc, idx) => {
                                 return (<tr key={idx}>
-                                    <th scope="row">{doc.id}</th>
+                                    <th scope="row">{idx+1}</th>
                                     <td>{doc.idcamp}</td>
                                     <td>{convertISOtoDate(doc.tanggal)}</td>
                                     <td>{doc.nama}</td>

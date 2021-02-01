@@ -19,9 +19,9 @@ function Sidebar(props) {
                 cur.classList.add("active")
             }
         }
-    })
+    },[])
     return (
-        <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+        <div id="sidebarMenu" className="col-md-2 col-lg-2 d-md-block bg-light sidebar collapse">
             <div className="position-sticky pt-3">
                 <ul className="nav flex-column">
                     <li className="nav-item">
@@ -52,20 +52,20 @@ function Sidebar(props) {
                                 <i className="ml-2 fa fa-caret-up" />}
                         </a>
                         <div id="collTabel" className="collapse pl-3 nav-link show">
-                            {camp.map((doc, idx) => {
-                                if (idx == 0) {
-                                    return (
-                                        <Link className="nav-link nav-tabel tabelgetdonation" key={idx} to={{
-                                            pathname: `/tabel/getDonation/${doc.id}`,
+                            {/* {camp.map((doc, idx) => { */}
+                                {/* if (idx == 0) { */}
+                                    {/* return ( */}
+                                        <Link className="nav-link nav-tabel tabelgetdonation" to={{
+                                            pathname: `/tabel/getDonation/1`,
                                             state: {
                                                 active: 'tabelgetdonation',
                                             }
                                         }}>getDonation
                                         </Link>
-                                    )
-                                }
-                            })
-                            }
+                                    {/* ) */}
+                                {/* } */}
+                            {/* }) */}
+                            {/* } */}
                             <Link className="nav-link nav-tabel tabelgetcampaign" to={{
                                 pathname: "/tabel/getCampaign",
                                 state: {
@@ -74,9 +74,19 @@ function Sidebar(props) {
                             }}>getCampaign</Link>
                         </div>
                     </li>
+                    <li className="nav-item">
+                        <Link className="nav-link relawan" aria-current="page" to={{
+                            pathname: "/relawan",
+                            state: {
+                                active: 'relawan'
+                            }
+                        }}>
+                            Relawan
+                        </Link>
+                    </li>
                 </ul>
             </div>
-        </nav>
+        </div>
     )
 }
 
