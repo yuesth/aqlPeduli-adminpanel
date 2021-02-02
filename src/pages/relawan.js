@@ -23,7 +23,7 @@ function Relawan(props) {
             setRela(res2)
             setRela2(res2)
             setLoading(false)
-        }).then((res)=>{
+        }).then((res) => {
             TableExport(document.getElementById("relawanTable"), {
                 headers: true,
                 formats: ["xlsx"]
@@ -36,8 +36,20 @@ function Relawan(props) {
         // })
     }, [])
     const searchkey = async (e) => {
+        var states = null
+        switch (e.target.value.toLowerCase()) {
+            case "baru":
+                states = 0
+                break;
+            case "aktif":
+                states = 1
+            case "expired":
+                states = 2
+            default:
+                break;
+        }
         const filtered = rela2.filter(re => {
-            return re.namaLengkap.toLowerCase().includes(e.target.value.toLowerCase()) || re.namaPanggilan.toLowerCase().includes(e.target.value.toLowerCase()) || re.jenisKelamin.toLowerCase().includes(e.target.value.toLowerCase()) || re.status.toLowerCase().includes(e.target.value.toLowerCase())
+            return re.namaLengkap.toLowerCase().includes(e.target.value.toLowerCase()) || re.namaPanggilan.toLowerCase().includes(e.target.value.toLowerCase()) || re.jenisKelamin.toLowerCase().includes(e.target.value.toLowerCase()) || re.status.toLowerCase().includes(e.target.value.toLowerCase()) || re.state === states
         })
         setKey(e.target.value)
         setRela(filtered)
@@ -54,7 +66,7 @@ function Relawan(props) {
                 </h2>
                 <div className="searchBox d-flex">
                     <h6 className="mt-1">Cari:</h6>
-                    <input className="searchInputs" type="text" value={key} onChange={searchkey} placeholder="Nama/Jenis kelamin/Status" style={{ background: `none`, border: `none`, width: `100%`, marginLeft: `10px` }} />
+                    <input className="searchInputs" type="text" value={key} onChange={searchkey} placeholder="Nama/Jenis kelamin/Status/State" style={{ background: `none`, border: `none`, width: `100%`, marginLeft: `10px` }} />
                 </div>
                 {/* <div className="w-auto h-auto position-absolute" style={{ top: `2rem`, right: `3rem` }} data-bs-toggle="modal" data-bs-target="#tambahDonationModal">
                     <div className="dropdown" onClick={toggleDDExport}>
@@ -69,30 +81,32 @@ function Relawan(props) {
                 <div className="scrolltable" id="relawanTable" style={{ overflowX: `auto` }}>
                     <table className="table table-bordered table-hover">
                         <thead className="text-center" style={{ fontSize: `0.8rem` }}>
-                            <th scope="col">#</th>
-                            <th scope="col">Fullname</th>
-                            <th scope="col">Nickname</th>
-                            <th scope="col">NIK</th>
-                            <th scope="col">Tempat Lahir</th>
-                            <th scope="col">Tanggal Lahir</th>
-                            <th scope="col">Umur</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Jml Saudara</th>
-                            <th scope="col">JK</th>
-                            <th scope="col">Anak Ke</th>
-                            <th scope="col">Alamat</th>
-                            <th scope="col">Facebook</th>
-                            <th scope="col">Instagram</th>
-                            <th scope="col">Twitter</th>
-                            <th scope="col">No Handphone</th>
-                            <th scope="col">Whatsapp</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Tempat Mengaji</th>
-                            <th scope="col">Motivasi</th>
-                            <th scope="col">Harapan</th>
-                            <th scope="col">Komitmen</th>
-                            <th scope="col">State</th>
-                            <th scope="col">Aksi</th>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">State</th>
+                                <th scope="col">Fullname</th>
+                                <th scope="col">Nickname</th>
+                                <th scope="col">NIK</th>
+                                <th scope="col">Tempat Lahir</th>
+                                <th scope="col">Tanggal Lahir</th>
+                                <th scope="col">Umur</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Jml Saudara</th>
+                                <th scope="col">JK</th>
+                                <th scope="col">Anak Ke</th>
+                                <th scope="col">Alamat</th>
+                                <th scope="col">Facebook</th>
+                                <th scope="col">Instagram</th>
+                                <th scope="col">Twitter</th>
+                                <th scope="col">No Handphone</th>
+                                <th scope="col">Whatsapp</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Tempat Mengaji</th>
+                                <th scope="col">Motivasi</th>
+                                <th scope="col">Harapan</th>
+                                <th scope="col">Komitmen</th>
+                                <th scope="col">Aksi</th>
+                            </tr>
                         </thead>
                         <tbody style={{ fontSize: `0.8rem` }}>
                             {
@@ -108,6 +122,17 @@ function Relawan(props) {
                                             <tr key={idx}>
                                                 {/* <Link to={`relawan/detail/${doc.id}`}> */}
                                                 <th scope="row">{idx + 1}</th>
+                                                <td>
+                                                    {
+                                                        doc.state == 0 && <span className="badge bg-primary">Baru</span>
+                                                    }
+                                                    {
+                                                        doc.state == 1 && <span className="badge bg-success">Aktif</span>
+                                                    }
+                                                    {
+                                                        doc.state == 2 && <span className="badge bg-secondary">Expired</span>
+                                                    }
+                                                </td>
                                                 <td>{doc.namaLengkap}</td>
                                                 <td>{doc.namaPanggilan}</td>
                                                 <td>{doc.NIK}</td>
@@ -129,7 +154,6 @@ function Relawan(props) {
                                                 <td>{doc.motivasi}</td>
                                                 <td>{doc.harapan}</td>
                                                 <td>{doc.komitmen}</td>
-                                                <td>{doc.state}</td>
                                                 <td>
                                                     <div className="btn-group" role="group" aria-label="Basic mixed styles example">
                                                         <Link to={{

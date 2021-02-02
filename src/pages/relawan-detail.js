@@ -38,6 +38,7 @@ function RelawanDetail(props) {
         motivasi: data.motivasi,
         harapan: data.harapan,
         komitmen: data.komitmen,
+        state: data.state
         // created: 'x-sheetmonkey-current-date-time'
     })
     const handleDeleteRelawan = (e) => {
@@ -194,6 +195,16 @@ function RelawanDetail(props) {
             <div className="mb-3">
                 <label htmlFor="message-text" className="col-form-label">Komitmen:</label>
                 <input type="text" name="komitmen" className="form-control" id="message-text" defaultValue={dataform.komitmen} onChange={updateField} />
+            </div>
+            <div className="mb-3">
+                <label htmlFor="message-text" className="col-form-label">State:</label>
+                {/* <input type="text" name="state" className="form-control" id="message-text" defaultValue={dataform.state} onChange={updateField} /> */}
+                <select className="form-select" name="state" aria-label="Default select example" onChange={updateField} defaultValue={dataform.state}>
+                    <option selected>State</option>
+                    <option value={0}>Baru</option>
+                    <option value={1}>Aktif</option>
+                    <option value={2}>Expired</option>
+                </select>
             </div>
             <button type="button" className="btn btn-success w-25" style={{ marginRight: `1rem` }} onClick={handleOpenEdit}>Edit & Simpan</button>
             <button type="button" className="btn btn-danger" onClick={handleOpen} data-bs-toggle="modal" data-bs-target="#hapusModal">Hapus</button>
