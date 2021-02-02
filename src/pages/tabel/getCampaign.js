@@ -25,7 +25,7 @@ function FormTabel(props) {
     const handleTambah = () => setOpen(prev => !prev)
     const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc'
     useEffect(() => {
-        fetch(`https://donasi.aqlpeduli.or.id/getCampaign?token=${token}`).then((res) => res.json()).then((parsedJson) => parsedJson.map(doc => (
+        fetch(`https://donasi.aqlpeduli.or.id/api/getCampaign?token=${tok}`).then((res) => res.json()).then((parsedJson) => parsedJson.map(doc => (
             {
                 idcamp: doc.id,
                 namacamp: doc.campaign_name,
@@ -39,7 +39,7 @@ function FormTabel(props) {
         })
     }, [])
     const handleAddCampaign = (e) => {
-        fetch(`https://donasi.aqlpeduli.or.id/addCampaign?token=${token}`, {
+        fetch(`https://donasi.aqlpeduli.or.id/api/addCampaign?token=${tok}`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'

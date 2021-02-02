@@ -17,7 +17,7 @@ function DetailDonation(props) {
     const handleOpen = () => setOpen(prev => !prev)
     const handleDeleteDonation = (e) => {
         const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc'
-        fetch(`https://donasi.aqlpeduli.or.id/deleteDonation?token=${token}&id=${data.id}`, {
+        fetch(`https://donasi.aqlpeduli.or.id/api/deleteDonation?token=${tok}&id=${data.id}`, {
             method: "DELETE",
         }).then(res => {
             console.log(res)
@@ -62,7 +62,7 @@ function DetailDonation(props) {
                 <label htmlFor="message-text" className="col-form-label">Amount:</label>
                 <input type="number" className="form-control" id="message-text" defaultValue={data.amount} />
             </div>
-            <button type="button" className="btn btn-success w-25" style={{ marginRight: `1rem` }}>Edit & Simpan</button>
+            {/* <button type="button" className="btn btn-success w-25" style={{ marginRight: `1rem` }}>Edit & Simpan</button> */}
             <button type="button" className="btn btn-danger" onClick={handleOpen} data-bs-toggle="modal" data-bs-target="#hapusModal">Hapus</button>
             {/* </form> */}
             <Modal show={open} onHide={handleOpen}>

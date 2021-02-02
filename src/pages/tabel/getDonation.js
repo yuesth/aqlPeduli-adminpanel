@@ -31,7 +31,7 @@ function FormTabel(props) {
     var banyakitem = 0
     const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc'
     useEffect(() => {
-        fetch(`https://donasi.aqlpeduli.or.id/getDonation?token=${token}&id_campaign=${id}`).then((res) => res.json()).then((parsedJson) => parsedJson.map(doc => (
+        fetch(`https://donasi.aqlpeduli.or.id/api/getDonation?token=${tok}&id_campaign=${id}`).then((res) => res.json()).then((parsedJson) => parsedJson.map(doc => (
             {
                 id: doc.id,
                 idcamp: doc.id_campaign,
@@ -52,7 +52,7 @@ function FormTabel(props) {
                 arritem.push(false)
             }
         })
-        fetch(`https://donasi.aqlpeduli.or.id/getCampaign?token=${token}`).then(res => res.json()).then(res2 => {
+        fetch(`https://donasi.aqlpeduli.or.id/api/getCampaign?token=${tok}`).then(res => res.json()).then(res2 => {
             setCampaign(res2)
         })
     }, [])
@@ -96,7 +96,7 @@ function FormTabel(props) {
             denyButtonText: `Cancel`,
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`https://donasi.aqlpeduli.or.id/setUnPaidDonation?token=${token}&id=${idDonatur}`, {
+                fetch(`https://donasi.aqlpeduli.or.id/api/setUnPaidDonation?token=${tok}&id=${idDonatur}`, {
                     method: 'PUT'
                 })
                     .then(res => {
@@ -146,7 +146,7 @@ function FormTabel(props) {
                     .then(resjson => {
                         console.log("data untuk wa: " + resjson)
                     })
-                fetch(`https://donasi.aqlpeduli.or.id/setPaidDonation?token=${token}&id=${idDonatur}`, {
+                fetch(`https://donasi.aqlpeduli.or.id/api/setPaidDonation?token=${tok}&id=${idDonatur}`, {
                     method: 'PUT'
                 })
                     .then(res => {
@@ -274,8 +274,8 @@ function FormTabel(props) {
                                             }}>
                                                 <button type="button" className="btn btn-warning" /*className="btn btn-warning mr-1 dropdown-toggle"*/ aria-haspopup="true" aria-expanded="false"><i className="fa fa-cog" /*role="button" id="dropdownAksiLink" data-toggle="dropdown"*/></i></button>
                                             </Link>
-                                            <button type="button" className="btn btn-success"><i className="fa fa-whatsapp"></i></button>
-                                            <button type="button" className="btn btn-danger"><i className="fa fa-envelope"></i></button>
+                                            {/* <button type="button" className="btn btn-success"><i className="fa fa-whatsapp"></i></button>
+                                            <button type="button" className="btn btn-danger"><i className="fa fa-envelope"></i></button> */}
                                         </div>
                                     </td>
                                 </tr>)
