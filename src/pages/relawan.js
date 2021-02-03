@@ -23,7 +23,7 @@ function Relawan(props) {
     const [key, setKey] = useState("")
     const [blastemailmodal, setBlastemailmodal] = useState(false)
     const [selectedwa, setSelectedwa] = useState([])
-    const [wa, setWa] = useState(0)
+    const [selectedwa2, setSelectedwa2] = useState([])
     const [formblast, setFormblast] = useState({
         subject: '',
         message: ''
@@ -108,27 +108,35 @@ function Relawan(props) {
         setRela(filtered)
     }
 
-    const onChangeSelectedWA = (idRela, index, e) => {
+    const onChangeSelectedWA = (idRela, wa, index, e) => {
         const clicked = selectedwa.indexOf(idRela)
         const all = [...selectedwa]
+        const all2 = [...selectedwa2]
         if (clicked === -1) {
             all.push(idRela);
+            all2.push(wa);
         } else {
             all.splice(clicked, 1);
+            all2.splice(clicked, 1)
         }
         setSelectedwa(all)
+        setSelectedwa2(all2)
     }
     const onChangeSelectedWASemua = (e) => {
         var allArr = []
+        var allArr2 = []
         if (selectedwa.length == rela.length) {
             allArr = []
+            allArr2 = []
         }
         else {
             for (var i = 0; i < rela.length; i++) {
                 allArr.push(rela[i].id)
+                allArr2.push(rela[i].whatsapp)
             }
         }
         setSelectedwa(allArr)
+        setSelectedwa2(allArr2)
     }
     const handleBlastWaRelawan = (e) => {
         console.log(selectedwa.length)
@@ -136,6 +144,10 @@ function Relawan(props) {
             ...formblast,
             allId: selectedwa,
             token: tok
+        }
+        const datawa = {
+            allNohp: selectedwa2,
+            message: formblast.message
         }
         fetch(`https://donasi.aqlpeduli.or.id/api/volunteerEmailBlast`, {
             method: "POST",
@@ -153,6 +165,14 @@ function Relawan(props) {
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    .then((res)=>{
+                        if (process.env.NODE_ENV == "production") {
+                            window.location.href = `https://admin-donasi.aqlpeduli.or.id/relawan`
+                        }
+                        else if (process.env.NODE_ENV == "development") {
+                            window.location.href = `http://localhost:3000/relawan`
+                        }
+                    })
                 }
                 else {
                     Swal.fire({
@@ -161,8 +181,25 @@ function Relawan(props) {
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    .then((res)=>{
+                        if (process.env.NODE_ENV == "production") {
+                            window.location.href = `https://admin-donasi.aqlpeduli.or.id/relawan`
+                        }
+                        else if (process.env.NODE_ENV == "development") {
+                            window.location.href = `http://localhost:3000/relawan`
+                        }
+                    })
                 }
             })
+        fetch(`https://admin-donasi.aqlpeduli.or.id/wa-blast/send-message-for-relawan`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datawa)
+        })
+        .then(res => res.json())
+        .then(res2 => { console.log("sukses? "+res2.success)})
         e.preventDefault()
 
     }
@@ -174,11 +211,11 @@ function Relawan(props) {
                 </h2>
                 <div className="searchBox d-flex">
                     <h6 className="mt-1">Cari:</h6>
-                    <input className="searchInputs" type="text" value={key} onChange={searchkey} placeholder="Nama/Jenis kelamin/Status/State" style={{ background: `none`, border: `none`, width: `100%`, marginLeft: `10px` }} />
+                    <input className="searchInputs" type="text" value={key} onChange={searchkey} placeholder="Nama/Jenis kelamin/Status/State" style={{ background: `none`, border: `1px solid black`, outline:`none`, width: `100%`, marginLeft: `10px` }} />
                 </div>
                 <div className="h-auto position-absolute" id="waBlast" style={{ top: `7.5rem`, right: `2rem`, color: `white`, width: `10rem` }}>
-                    <button className="btn btn-danger w-100" style={{ color: `white` }} id="blastWa" aria-haspopup="true" aria-expanded="false" onClick={handleBlastModal}>
-                     Blast Email <span className="badge bg-light text-dark">{selectedwa.length}</span>
+                    <button className="btn btn-primary w-100" style={{ color: `white` }} id="blastWa" aria-haspopup="true" aria-expanded="false" onClick={handleBlastModal}>
+                     Blast <i className="fa fa-bolt"></i> <span className="badge bg-light text-dark">{selectedwa.length}</span>
                     </button>
                 </div>
                 {/* <div className="w-auto h-auto position-absolute" style={{ top: `2rem`, right: `3rem` }} data-bs-toggle="modal" data-bs-target="#tambahDonationModal">
@@ -236,7 +273,7 @@ function Relawan(props) {
                                         return (
                                             <tr key={idx}>
                                                 {/* <Link to={`relawan/detail/${doc.id}`}> */}
-                                                <th style={{textAlign:`center`}}><input type="checkbox" name="row-check" value={selectedwa} onChange={(e) => onChangeSelectedWA(doc.id, idx, e)} /></th>
+                                                <th style={{textAlign:`center`}}><input type="checkbox" name="row-check" value={selectedwa} onChange={(e) => onChangeSelectedWA(doc.id, doc.whatsapp, idx, e)} /></th>
                                                 {/* <th><input key={doc.id} onClick={handleCheckChieldElement} type="checkbox" defaultChecked={doc.isChecked} value={doc.id} /></th> */}
                                                 <th scope="row">{idx + 1}</th>
                                                 <td>{doc.id}</td>
@@ -295,14 +332,14 @@ function Relawan(props) {
                     </table>
                     <Modal show={blastemailmodal} onHide={handleBlastModal}>
                         <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Blast Email Relawan</h5>
+                            <h5 className="modal-title" id="exampleModalLabel">Blast Email dan Whatsapp Relawan</h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleBlastModal} />
                         </div>
                         <Modal.Body>
-                            <h6>Kirim email ke ID: {selectedwa.map((doc,idx)=> (<>{doc}, </>))}</h6>
+                            <h6>Kirim email & WA ke ID: {selectedwa.map((doc,idx)=> (<>{doc}, </>))}</h6>
                             <form onSubmit={handleBlastWaRelawan}>
                                 <div className="mb-3">
-                                    <label htmlFor="recipient-name" className="col-form-label">Subject:</label>
+                                    <label htmlFor="recipient-name" className="col-form-label">Subject (untuk email):</label>
                                     <input type="text" className="form-control" id="name" name="subject" onChange={onChangeFormBlast} />
                                 </div>
                                 <div className="mb-3">
@@ -310,7 +347,7 @@ function Relawan(props) {
                                     <textarea className="form-control" name="message" as="textarea" onChange={onChangeFormBlast} />
                                 </div>
                                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleBlastModal} style={{ marginRight: `1rem` }}>Tutup</button>
-                                <button type="submit" className="btn btn-danger">Kirim <i className="fa fa-envelope"></i></button>
+                                <button type="submit" className="btn btn-primary w-25">Kirim <i className="fa fa-envelope"> <i className="fa fa-whatsapp"></i></i></button>
                             </form>
                         </Modal.Body>
                     </Modal>
