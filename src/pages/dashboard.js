@@ -8,7 +8,6 @@ function Dashboard(props) {
         act = props.location.state.active
     }
     const tok = JSON.parse(sessionStorage.getItem('token'))
-    console.log("token dari db: "+ tok)
     if(tok == null || tok == "null"){
         hist.push('/')
     }

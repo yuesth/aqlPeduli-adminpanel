@@ -29,7 +29,6 @@ function Login() {
                 // console.log(resjson)
                 if (resjson.access_token) {
                     sessionStorage.setItem('token', JSON.stringify(resjson.access_token))
-                    console.log("token dari login: "+JSON.parse(sessionStorage.getItem('token')))
                     hist.push('/dashboard')
                 }
                 else {

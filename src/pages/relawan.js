@@ -14,6 +14,7 @@ function Relawan(props) {
     if (tok == null || tok == "null") {
         hist.push('/')
     }
+    console.log("tok: "+tok)
     const act = "relawan"
     const [rela, setRela] = useState([])
     const [rela2, setRela2] = useState([])
@@ -88,19 +89,7 @@ function Relawan(props) {
             [e.target.name]: e.target.value
         })
     }
-    const handleAllChecked = (event) => {
-        let relawans = rela3
-        relawans.forEach(rela => rela.isChecked = event.target.checked)
-        setRela(relawans)
-    }
-    const handleCheckChieldElement = (event) => {
-        let relawans = rela3
-        relawans.forEach(rela => {
-            if (rela.value === event.target.value)
-                rela.isChecked = event.target.checked
-        })
-        setRela(relawans)
-    }
+
     const searchkey = async (e) => {
         var states = null
         if (e.target.value.toLowerCase() == "baru") {
@@ -189,7 +178,7 @@ function Relawan(props) {
                 </div>
                 <div className="h-auto position-absolute" id="waBlast" style={{ top: `7.5rem`, right: `2rem`, color: `white`, width: `10rem` }}>
                     <button className="btn btn-danger w-100" style={{ color: `white` }} id="blastWa" aria-haspopup="true" aria-expanded="false" onClick={handleBlastModal}>
-                     Blast Email <span class="badge bg-light text-dark">{selectedwa.length}</span>
+                     Blast Email <span className="badge bg-light text-dark">{selectedwa.length}</span>
                     </button>
                 </div>
                 {/* <div className="w-auto h-auto position-absolute" style={{ top: `2rem`, right: `3rem` }} data-bs-toggle="modal" data-bs-target="#tambahDonationModal">
