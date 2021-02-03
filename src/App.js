@@ -8,6 +8,7 @@ import Login from './pages/login'
 import Relawan from './pages/relawan'
 import RelawanDetail from './pages/relawan-detail'
 import Dashboard from './pages/dashboard'
+import Coba from './pages/coba'
 import './App.css';
 
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/dashboard" exact component={Dashboard}></Route>
           <Route path="/qr-code-wa" exact component={QrCodewa}></Route>
           <Route path="/relawan" exact component={Relawan}></Route>
+          <Route path="/coba" exact component={Coba}></Route>
           <Route path="/relawan/detail/:id" exact component={RelawanDetail}></Route>
         </Switch>
       </BrowserRouter>

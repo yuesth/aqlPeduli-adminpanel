@@ -70,3 +70,7 @@ position: block;
   .tableexport-caption .button-default:hover{
       background-color: rgb(12, 162, 192);
   }
+
+  #waBlast{
+    display: none;
+  }

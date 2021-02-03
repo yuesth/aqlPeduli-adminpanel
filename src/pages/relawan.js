@@ -3,7 +3,9 @@ import { useState, useEffect } from "react"
 import Layout from "../layout"
 import "./relawan.css"
 import { TableExport } from "tableexport"
-// var $ = window.jQuery;
+import Modal from "react-bootstrap/Modal"
+var $ = window.jQuery;
+const Swal = window.swal
 
 function Relawan(props) {
     const hist = useHistory()
@@ -15,38 +17,100 @@ function Relawan(props) {
     const act = "relawan"
     const [rela, setRela] = useState([])
     const [rela2, setRela2] = useState([])
+    const [rela3, setRela3] = useState([])
     const [loading, setLoading] = useState(true)
     const [key, setKey] = useState("")
-    const [opendd, setOpendd] = useState(false)
+    const [blastemailmodal, setBlastemailmodal] = useState(false)
+    const [selectedwa, setSelectedwa] = useState([])
+    const [wa, setWa] = useState(0)
+    const [formblast, setFormblast] = useState({
+        subject: '',
+        message: ''
+    })
     useEffect(() => {
-        fetch(`https://donasi.aqlpeduli.or.id/api/getVolunteer?token=${tok}`).then(res => res.json()).then(res2 => {
-            setRela(res2)
-            setRela2(res2)
-            setLoading(false)
-        }).then((res) => {
-            TableExport(document.getElementById("relawanTable"), {
-                headers: true,
-                formats: ["xlsx"]
+        fetch(`https://donasi.aqlpeduli.or.id/api/getVolunteer?token=${tok}`).then(res => res.json())
+            .then(resjson => resjson.map((doc, idx) => {
+                return ({
+                    ...doc,
+                    isChecked: false
+                })
+            }))
+            .then(res2 => {
+                setRela(res2)
+                setRela2(res2)
+                setRela3(res2)
+                setLoading(false)
+            }).then((res) => {
+                TableExport(document.getElementById("relawanTable"), {
+                    headers: true,
+                    formats: ["xlsx"]
+                })
             })
-        })
         // .then((res)=>{
         //     $(document).ready(function () {
         //         $('#example').DataTable();
         //     });
         // })
     }, [])
+    useEffect(() => {
+        $(function () {
+            $("#check_all").on("click", function () {
+                if ($("input:checkbox").prop("checked")) {
+                    $("input:checkbox[name='row-check']").prop("checked", true);
+                } else {
+                    $("input:checkbox[name='row-check']").prop("checked", false);
+                }
+            });
+            $("input:checkbox[name='row-check']").on("change", function () {
+                var total_check_boxes = $("input:checkbox[name='row-check']").length;
+                var total_checked_boxes = $("input:checkbox[name='row-check']:checked").length;
+
+                // If all checked manually then check check_all checkbox
+                if (total_check_boxes === total_checked_boxes) {
+                    $("#check_all").prop("checked", true);
+                }
+                else {
+                    $("#check_all").prop("checked", false);
+                }
+            });
+            if (selectedwa.length !== 0) {
+                $('#waBlast').css("display", "block")
+            }
+            else {
+                $('#waBlast').css("display", "none")
+            }
+        });
+    })
+    const handleBlastModal = () => setBlastemailmodal(prev => !prev)
+    const onChangeFormBlast = (e) => {
+        setFormblast({
+            ...formblast,
+            [e.target.name]: e.target.value
+        })
+    }
+    const handleAllChecked = (event) => {
+        let relawans = rela3
+        relawans.forEach(rela => rela.isChecked = event.target.checked)
+        setRela(relawans)
+    }
+    const handleCheckChieldElement = (event) => {
+        let relawans = rela3
+        relawans.forEach(rela => {
+            if (rela.value === event.target.value)
+                rela.isChecked = event.target.checked
+        })
+        setRela(relawans)
+    }
     const searchkey = async (e) => {
         var states = null
-        switch (e.target.value.toLowerCase()) {
-            case "baru":
-                states = 0
-                break;
-            case "aktif":
-                states = 1
-            case "expired":
-                states = 2
-            default:
-                break;
+        if (e.target.value.toLowerCase() == "baru") {
+            states = 0
+        }
+        else if (e.target.value.toLowerCase() == "aktif") {
+            states = 1
+        }
+        else if (e.target.value.toLowerCase() == "expired") {
+            states = 2
         }
         const filtered = rela2.filter(re => {
             return re.namaLengkap.toLowerCase().includes(e.target.value.toLowerCase()) || re.namaPanggilan.toLowerCase().includes(e.target.value.toLowerCase()) || re.jenisKelamin.toLowerCase().includes(e.target.value.toLowerCase()) || re.status.toLowerCase().includes(e.target.value.toLowerCase()) || re.state === states
@@ -54,10 +118,65 @@ function Relawan(props) {
         setKey(e.target.value)
         setRela(filtered)
     }
-    // const handleExport = (format)=>{ 
-    // }
-    const toggleDDExport = () => setOpendd(prev => !prev)
-    const ddClass = `dropdown-menu${opendd ? " show" : ""}`;
+
+    const onChangeSelectedWA = (idRela, index, e) => {
+        const clicked = selectedwa.indexOf(idRela)
+        const all = [...selectedwa]
+        if (clicked === -1) {
+            all.push(idRela);
+        } else {
+            all.splice(clicked, 1);
+        }
+        setSelectedwa(all)
+    }
+    const onChangeSelectedWASemua = (e) => {
+        var allArr = []
+        if (selectedwa.length == rela.length) {
+            allArr = []
+        }
+        else {
+            for (var i = 0; i < rela.length; i++) {
+                allArr.push(rela[i].id)
+            }
+        }
+        setSelectedwa(allArr)
+    }
+    const handleBlastWaRelawan = (e) => {
+        console.log(selectedwa.length)
+        const dataemail = {
+            ...formblast,
+            allId: selectedwa,
+            token: tok
+        }
+        fetch(`https://donasi.aqlpeduli.or.id/api/volunteerEmailBlast`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataemail)
+        })
+            .then(res => res.json())
+            .then(res2 => {
+                if (res2.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sukses Mengirim Email',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Mengirim Email',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
+        e.preventDefault()
+
+    }
     return (
         <>
             <Layout active={act}>
@@ -67,6 +186,11 @@ function Relawan(props) {
                 <div className="searchBox d-flex">
                     <h6 className="mt-1">Cari:</h6>
                     <input className="searchInputs" type="text" value={key} onChange={searchkey} placeholder="Nama/Jenis kelamin/Status/State" style={{ background: `none`, border: `none`, width: `100%`, marginLeft: `10px` }} />
+                </div>
+                <div className="h-auto position-absolute" id="waBlast" style={{ top: `7.5rem`, right: `2rem`, color: `white`, width: `10rem` }}>
+                    <button className="btn btn-danger w-100" style={{ color: `white` }} id="blastWa" aria-haspopup="true" aria-expanded="false" onClick={handleBlastModal}>
+                     Blast Email <span class="badge bg-light text-dark">{selectedwa.length}</span>
+                    </button>
                 </div>
                 {/* <div className="w-auto h-auto position-absolute" style={{ top: `2rem`, right: `3rem` }} data-bs-toggle="modal" data-bs-target="#tambahDonationModal">
                     <div className="dropdown" onClick={toggleDDExport}>
@@ -79,10 +203,12 @@ function Relawan(props) {
                     </div>
                 </div> */}
                 <div className="scrolltable" id="relawanTable" style={{ overflowX: `auto` }}>
-                    <table className="table table-bordered table-hover">
+                    <table className="table table-bordered table-hover relawanIdTable">
                         <thead className="text-center" style={{ fontSize: `0.8rem` }}>
                             <tr>
+                                <th scope="col">Pilih Semua<input id="check_all" onChange={onChangeSelectedWASemua} value="checkedall" type="checkbox" /></th>
                                 <th scope="col">#</th>
+                                <th scope="id">ID</th>
                                 <th scope="col">State</th>
                                 <th scope="col">Fullname</th>
                                 <th scope="col">Nickname</th>
@@ -121,7 +247,10 @@ function Relawan(props) {
                                         return (
                                             <tr key={idx}>
                                                 {/* <Link to={`relawan/detail/${doc.id}`}> */}
+                                                <th style={{textAlign:`center`}}><input type="checkbox" name="row-check" value={selectedwa} onChange={(e) => onChangeSelectedWA(doc.id, idx, e)} /></th>
+                                                {/* <th><input key={doc.id} onClick={handleCheckChieldElement} type="checkbox" defaultChecked={doc.isChecked} value={doc.id} /></th> */}
                                                 <th scope="row">{idx + 1}</th>
+                                                <td>{doc.id}</td>
                                                 <td>
                                                     {
                                                         doc.state == 0 && <span className="badge bg-primary">Baru</span>
@@ -175,6 +304,27 @@ function Relawan(props) {
                             }
                         </tbody>
                     </table>
+                    <Modal show={blastemailmodal} onHide={handleBlastModal}>
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Blast Email Relawan</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleBlastModal} />
+                        </div>
+                        <Modal.Body>
+                            <h6>Kirim email ke ID: {selectedwa.map((doc,idx)=> (<>{doc}, </>))}</h6>
+                            <form onSubmit={handleBlastWaRelawan}>
+                                <div className="mb-3">
+                                    <label htmlFor="recipient-name" className="col-form-label">Subject:</label>
+                                    <input type="text" className="form-control" id="name" name="subject" onChange={onChangeFormBlast} />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="message-text" className="col-form-label">Pesan:</label>
+                                    <textarea className="form-control" name="message" as="textarea" onChange={onChangeFormBlast} />
+                                </div>
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleBlastModal} style={{ marginRight: `1rem` }}>Tutup</button>
+                                <button type="submit" className="btn btn-danger">Kirim <i className="fa fa-envelope"></i></button>
+                            </form>
+                        </Modal.Body>
+                    </Modal>
                 </div>
                 {/* <div className="scrolltable" style={{ overflowX: `auto` }}>
                     <table id="example" className="table table-striped table-bordered">
