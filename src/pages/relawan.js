@@ -8,22 +8,35 @@ var $ = window.jQuery;
 const Swal = window.swal
 
 function Relawan(props) {
+    const sortTypes = {
+        up: {
+            class: 'sort-up',
+            fn: (a, b) => a.umur - b.umur
+        },
+        down: {
+            class: 'sort-down',
+            fn: (a, b) => b.umur - a.umur
+        },
+        default: {
+            class: 'sort',
+            fn: (a, b) => a
+        }
+    };
     const hist = useHistory()
     const tok = JSON.parse(sessionStorage.getItem('token'))
     const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvbG9naW4iLCJpYXQiOjE2MTA0MjgzNzgsImV4cCI6MTYxMDQzMTk3OCwibmJmIjoxNjEwNDI4Mzc4LCJqdGkiOiJWSTFEZkVORjZWc3luNHB2Iiwic3ViIjoxMDAxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.awgkdKJarKGTxP_0HIldNI7CnG_xtJoxnzhALuFGIPc'
     if (tok == null || tok == "null") {
         hist.push('/')
     }
-    console.log("tok: "+tok)
     const act = "relawan"
     const [rela, setRela] = useState([])
     const [rela2, setRela2] = useState([])
-    const [rela3, setRela3] = useState([])
     const [loading, setLoading] = useState(true)
     const [key, setKey] = useState("")
     const [blastemailmodal, setBlastemailmodal] = useState(false)
     const [selectedwa, setSelectedwa] = useState([])
     const [selectedwa2, setSelectedwa2] = useState([])
+    const [currsort, setCurrsort] = useState('default')
     const [formblast, setFormblast] = useState({
         subject: '',
         message: ''
@@ -39,7 +52,6 @@ function Relawan(props) {
             .then(res2 => {
                 setRela(res2)
                 setRela2(res2)
-                setRela3(res2)
                 setLoading(false)
             }).then((res) => {
                 TableExport(document.getElementById("relawanTable"), {
@@ -83,6 +95,15 @@ function Relawan(props) {
         });
     })
     const handleBlastModal = () => setBlastemailmodal(prev => !prev)
+    const onSortChange = () => {
+        const currSort = currsort;
+        let nextSort;
+
+        if (currSort === 'down') nextSort = 'up';
+        else if (currSort === 'up') nextSort = 'default';
+        else if (currSort === 'default') nextSort = 'down';
+        setCurrsort(nextSort)
+    };
     const onChangeFormBlast = (e) => {
         setFormblast({
             ...formblast,
@@ -165,14 +186,14 @@ function Relawan(props) {
                         showConfirmButton: false,
                         timer: 1500
                     })
-                    .then((res)=>{
-                        if (process.env.NODE_ENV == "production") {
-                            window.location.href = `https://admin-donasi.aqlpeduli.or.id/relawan`
-                        }
-                        else if (process.env.NODE_ENV == "development") {
-                            window.location.href = `http://localhost:3000/relawan`
-                        }
-                    })
+                        .then((res) => {
+                            if (process.env.NODE_ENV == "production") {
+                                window.location.href = `https://admin-donasi.aqlpeduli.or.id/relawan`
+                            }
+                            else if (process.env.NODE_ENV == "development") {
+                                window.location.href = `http://localhost:3000/relawan`
+                            }
+                        })
                 }
                 else {
                     Swal.fire({
@@ -181,14 +202,14 @@ function Relawan(props) {
                         showConfirmButton: false,
                         timer: 1500
                     })
-                    .then((res)=>{
-                        if (process.env.NODE_ENV == "production") {
-                            window.location.href = `https://admin-donasi.aqlpeduli.or.id/relawan`
-                        }
-                        else if (process.env.NODE_ENV == "development") {
-                            window.location.href = `http://localhost:3000/relawan`
-                        }
-                    })
+                        .then((res) => {
+                            if (process.env.NODE_ENV == "production") {
+                                window.location.href = `https://admin-donasi.aqlpeduli.or.id/relawan`
+                            }
+                            else if (process.env.NODE_ENV == "development") {
+                                window.location.href = `http://localhost:3000/relawan`
+                            }
+                        })
                 }
             })
         fetch(`https://admin-donasi.aqlpeduli.or.id/wa-blast/send-message-for-relawan`, {
@@ -198,8 +219,8 @@ function Relawan(props) {
             },
             body: JSON.stringify(datawa)
         })
-        .then(res => res.json())
-        .then(res2 => { console.log("sukses? "+res2.success)})
+            .then(res => res.json())
+            .then(res2 => { console.log("sukses? " + res2.success) })
         e.preventDefault()
 
     }
@@ -211,11 +232,11 @@ function Relawan(props) {
                 </h2>
                 <div className="searchBox d-flex">
                     <h6 className="mt-1">Cari:</h6>
-                    <input className="searchInputs" type="text" value={key} onChange={searchkey} placeholder="Nama/Jenis kelamin/Status/State" style={{ background: `none`, border: `1px solid black`, outline:`none`, width: `100%`, marginLeft: `10px` }} />
+                    <input className="searchInputs" type="text" value={key} onChange={searchkey} placeholder="Nama/Jenis kelamin/Status/State" style={{ background: `none`, border: `1px solid black`, outline: `none`, width: `100%`, marginLeft: `10px` }} />
                 </div>
                 <div className="h-auto position-absolute" id="waBlast" style={{ top: `7.5rem`, right: `2rem`, color: `white`, width: `10rem` }}>
                     <button className="btn btn-primary w-100" style={{ color: `white` }} id="blastWa" aria-haspopup="true" aria-expanded="false" onClick={handleBlastModal}>
-                     Blast <i className="fa fa-bolt"></i> <span className="badge bg-light text-dark">{selectedwa.length}</span>
+                        Blast <i className="fa fa-bolt"></i> <span className="badge bg-light text-dark">{selectedwa.length}</span>
                     </button>
                 </div>
                 {/* <div className="w-auto h-auto position-absolute" style={{ top: `2rem`, right: `3rem` }} data-bs-toggle="modal" data-bs-target="#tambahDonationModal">
@@ -229,7 +250,7 @@ function Relawan(props) {
                     </div>
                 </div> */}
                 <div className="scrolltable" id="relawanTable" style={{ overflowX: `auto` }}>
-                    <table className="table table-bordered table-hover relawanIdTable">
+                    <table className="table table-bordered table-hover relawanIdTable" id="idTable">
                         <thead className="text-center" style={{ fontSize: `0.8rem` }}>
                             <tr>
                                 <th scope="col">Pilih Semua<input id="check_all" onChange={onChangeSelectedWASemua} value="checkedall" type="checkbox" /></th>
@@ -241,7 +262,12 @@ function Relawan(props) {
                                 <th scope="col">NIK</th>
                                 <th scope="col">Tempat Lahir</th>
                                 <th scope="col">Tanggal Lahir</th>
-                                <th scope="col">Umur</th>
+                                <th scope="col" className="d-flex align-items-center my-3">
+                                    Umur 
+                                    <button onClick={onSortChange} style={{border:`none`, outline:`none`}}>
+                                        <i className={`fa fa-${sortTypes[currsort].class}`} />
+                                    </button>
+                                </th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Jml Saudara</th>
                                 <th scope="col">JK</th>
@@ -269,11 +295,11 @@ function Relawan(props) {
                                         </div>
                                     </div>
                                     :
-                                    rela.map((doc, idx) => {
+                                    [...rela].sort(sortTypes[currsort].fn).map((doc, idx) => {
                                         return (
                                             <tr key={idx}>
                                                 {/* <Link to={`relawan/detail/${doc.id}`}> */}
-                                                <th style={{textAlign:`center`}}><input type="checkbox" name="row-check" value={selectedwa} onChange={(e) => onChangeSelectedWA(doc.id, doc.whatsapp, idx, e)} /></th>
+                                                <th style={{ textAlign: `center` }}><input type="checkbox" name="row-check" value={selectedwa} onChange={(e) => onChangeSelectedWA(doc.id, doc.whatsapp, idx, e)} /></th>
                                                 {/* <th><input key={doc.id} onClick={handleCheckChieldElement} type="checkbox" defaultChecked={doc.isChecked} value={doc.id} /></th> */}
                                                 <th scope="row">{idx + 1}</th>
                                                 <td>{doc.id}</td>
@@ -336,7 +362,7 @@ function Relawan(props) {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleBlastModal} />
                         </div>
                         <Modal.Body>
-                            <h6>Kirim email & WA ke ID: {selectedwa.map((doc,idx)=> (<>{doc}, </>))}</h6>
+                            <h6>Kirim email & WA ke ID: {selectedwa.map((doc, idx) => (<>{doc}, </>))}</h6>
                             <form onSubmit={handleBlastWaRelawan}>
                                 <div className="mb-3">
                                     <label htmlFor="recipient-name" className="col-form-label">Subject (untuk email):</label>
