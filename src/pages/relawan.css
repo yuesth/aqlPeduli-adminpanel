@@ -1,10 +1,10 @@
 .searchBox{
-position: block;
-  background: white;
-  height: 50px;
-  border-radius: 50px;
-  padding: 10px;
-  width: 300px
+position: relative;
+background: white;
+height: 50px;
+border-radius: 50px;
+padding: 10px;
+width: 300px
 }
 
 .searchBtn{
@@ -18,23 +18,6 @@ position: block;
   justify-content: center;
   align-items: center;
   transition: 2s;
-}
-
-.fa-Search{
-  background: black;
-  font-size: 24px;
-}
-
-.searchInput{
-    border: none;
-  background: none;
-  outline: none;
-  float: left;
-  padding: 0;
-  color: black;
-  font-size: 12px;
-  transition: 0.4s;
-  line-height: 20px;
 }
 
 .searchInputs::placeholder{
@@ -74,3 +57,7 @@ position: block;
   #waBlast{
     display: none;
   }
+
+  /* #clearBtn{
+    display: none;
+  } */
