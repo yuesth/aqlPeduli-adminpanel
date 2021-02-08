@@ -55,7 +55,7 @@ function FormTabel(props) {
                 else if(process.env.NODE_ENV == "development"){
                     window.location.href = "http://localhost:3000/tabel/getCampaign"
                 }
-            }, 1500)
+            }, 500)
         })
         e.preventDefault()
     }

@@ -224,7 +224,7 @@ function RelawanDetail(props) {
                     <h5 className="modal-title" id="exampleModalLabel">Konfirmasi Edit</h5>
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleOpenEdit} />
                 </div>
-                <Modal.Body>Yakin ingin Simpan perubahan data donation dari Sdr/i. <strong>{data.nama}</strong>?</Modal.Body>
+                <Modal.Body>Yakin ingin Simpan perubahan data relawan dari Sdr/i. <strong>{data.namaLengkap}</strong>?</Modal.Body>
                 <Modal.Footer>
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleOpenEdit}>Tutup</button>
                     <button type="button" className="btn btn-success" onClick={() => handleEditDonation(data.id)}>Edit & Simpan</button>

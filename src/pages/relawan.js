@@ -36,6 +36,7 @@ function Relawan(props) {
     const [blastemailmodal, setBlastemailmodal] = useState(false)
     const [selectedwa, setSelectedwa] = useState([])
     const [selectedwa2, setSelectedwa2] = useState([])
+    const [selectedNamaRel, setSelectedNamaRel] = useState([])
     const [currsort, setCurrsort] = useState('default')
     const[reload, setReload] = useState(1)
     const [formblast, setFormblast] = useState({
@@ -127,35 +128,43 @@ function Relawan(props) {
         // document.getElementById("clearBtn").style.display = "block"
     }
 
-    const onChangeSelectedWA = (idRela, wa, index, e) => {
+    const onChangeSelectedWA = (idRela, wa, fullname, index, e) => {
         const clicked = selectedwa.indexOf(idRela)
         const all = [...selectedwa]
         const all2 = [...selectedwa2]
+        const allNamaRel = [...selectedNamaRel]
         if (clicked === -1) {
             all.push(idRela);
             all2.push(wa);
+            allNamaRel.push(fullname)
         } else {
             all.splice(clicked, 1);
             all2.splice(clicked, 1)
+            allNamaRel.splice(clicked,1)
         }
         setSelectedwa(all)
         setSelectedwa2(all2)
+        setSelectedNamaRel(allNamaRel)
     }
     const onChangeSelectedWASemua = (e) => {
         var allArr = []
         var allArr2 = []
+        var allNamaRel = []
         if (selectedwa.length == rela.length) {
             allArr = []
             allArr2 = []
+            allNamaRel = []
         }
         else {
             for (var i = 0; i < rela.length; i++) {
                 allArr.push(rela[i].id)
                 allArr2.push(rela[i].whatsapp)
+                allNamaRel.push(rela[i].namaLengkap)
             }
         }
         setSelectedwa(allArr)
         setSelectedwa2(allArr2)
+        setSelectedNamaRel(allNamaRel)
     }
     const handleBlastWaRelawan = (e) => {
         const datawa = {
@@ -260,10 +269,6 @@ function Relawan(props) {
         e.preventDefault()
 
     }
-    // const handleClearInput = ()=>{
-    //     var inn = document.getElementById("enter")
-    //     inn.value = null
-    // }
     return (
         <>
             <Layout active={act}>
@@ -330,7 +335,7 @@ function Relawan(props) {
                                         return (
                                             <tr key={idx}>
                                                 {/* <Link to={`relawan/detail/${doc.id}`}> */}
-                                                <th style={{ textAlign: `center` }}><input type="checkbox" name="row-check" value={selectedwa} onChange={(e) => onChangeSelectedWA(doc.id, doc.whatsapp, idx, e)} /></th>
+                                                <th style={{ textAlign: `center` }}><input type="checkbox" name="row-check" value={selectedwa} onChange={(e) => onChangeSelectedWA(doc.id, doc.whatsapp, doc.namaLengkap, idx, e)} /></th>
                                                 {/* <th><input key={doc.id} onClick={handleCheckChieldElement} type="checkbox" defaultChecked={doc.isChecked} value={doc.id} /></th> */}
                                                 <th scope="row">{idx + 1}</th>
                                                 <td>{doc.id}</td>
@@ -393,7 +398,7 @@ function Relawan(props) {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleBlastModal} />
                         </div>
                         <Modal.Body>
-                            <h6>Kirim email & WA ke ID: {selectedwa.map((doc, idx) => (<>{doc}, </>))}</h6>
+                            <h6>Kirim email & WA ke: {selectedNamaRel.map((doc, idx) => (<>{doc}, </>))}</h6>
                             {/* <form onSubmit={handleBlastWaRelawan}> */}
                             <div className="mb-3">
                                 <label htmlFor="recipient-name" className="col-form-label">Subject (untuk email):</label>

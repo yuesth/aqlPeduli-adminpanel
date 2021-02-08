@@ -52,12 +52,12 @@ function DetailCampaign(props) {
             body: JSON.stringify(editcamp)
         })
         .then((res)=>{
-            // if(process.env.NODE_ENV == "production"){
-            //     window.location.href = "https://admin-donasi.aqlpeduli.or.id/tabel/getCampaign"
-            // }
-            // else if(process.env.NODE_ENV == "development"){
-            //     window.location.href = "http://localhost:3000/tabel/getCampaign"
-            // }
+            if(process.env.NODE_ENV == "production"){
+                window.location.href = "https://admin-donasi.aqlpeduli.or.id/tabel/getCampaign"
+            }
+            else if(process.env.NODE_ENV == "development"){
+                window.location.href = "http://localhost:3000/tabel/getCampaign"
+            }
         })
     }
     return (
@@ -107,7 +107,7 @@ function DetailCampaign(props) {
                     <h5 className="modal-title" id="exampleModalLabel">Konfirmasi Edit</h5>
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleOpenEdit} />
                 </div>
-                <Modal.Body>Yakin ingin Simpan perubahan data donation dari Sdr/i. <strong>{data.nama}</strong>?</Modal.Body>
+                <Modal.Body>Yakin ingin Simpan perubahan data campaign: <strong>{data.namacamp}</strong>?</Modal.Body>
                 <Modal.Footer>
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleOpenEdit}>Tutup</button>
                     <button type="button" className="btn btn-success" onClick={() => handleEditCampaign(data.idcamp)}>Edit & Simpan</button>
