@@ -5,6 +5,7 @@ function Layout({ active, children }) {
     const hist = useHistory()
     const tok = JSON.parse(sessionStorage.getItem('token'))
     const onSignout = ()=>{
+        sessionStorage.removeItem('token')
         fetch(`https://donasi.aqlpeduli.or.id/api/logout`, {
             method:"POST",
             headers:{
@@ -14,7 +15,6 @@ function Layout({ active, children }) {
         })
         .then(res => res.json())
         .then(res2 => {
-            sessionStorage.removeItem('token')
             hist.push('/')
         })
     }

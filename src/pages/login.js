@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import "./login.css"
+const $ = window.jQuery
 
 function Login() {
     const hist = useHistory()
@@ -46,6 +47,19 @@ function Login() {
             })
         e.preventDefault()
     }
+    useEffect(() => {
+        $(".toggle-password").click(function () {
+
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            var x = document.getElementById("myInput");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        });
+    })
     return (
         <>
             <div className="container">
@@ -56,7 +70,10 @@ function Login() {
                             <img className="profile-img profileImg" src={`${process.env.PUBLIC_URL}/aql-wa.jpg`} alt="logo-login" />
                             <form className="form-signin formSignin" onSubmit={onHandleLoginSubmit}>
                                 <input type="text" name="email" onChange={onChangeLogin} className="form-control formControl" placeholder="Email" required />
-                                <input type="password" name="password" onChange={onChangeLogin} className="form-control formControl" placeholder="Password" required />
+                                <div className="form-group" style={{ position: `relative` }}>
+                                    <input type="password" name="password" id="myInput" onChange={onChangeLogin} className="form-control formControl" placeholder="Password" required />
+                                    <span toggle="#password-field" className="fa fa-fw fa-eye field-icon toggle-password" style={{ position: `absolute`, right: `5px`, top: `15px` }} />
+                                </div>
                                 <a type="submit" style={{ color: `white`, textDecoration: `none`, width: `100%` }}><button className="btn btn-primary w-100">
                                     Sign in</button></a>
                             </form>
